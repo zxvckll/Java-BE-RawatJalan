@@ -8,6 +8,7 @@ Request Body :
 
 ```json
 {
+  "name": "syam",
   "email" : "syam@example.com",
   "password" : "rahasia"
 }
@@ -37,6 +38,7 @@ Request Body :
 
 ```json
 {
+  "name": "syam",
   "email" : "syam@example.com",
   "password" : "rahasia" 
 }
@@ -75,6 +77,7 @@ Response Body (Success) :
 {
   "data" : {
     "userId": "123e4567-e89b-12d3-a456-426614174000",
+    "name": "syam",
     "email" : "syam@example.com"
   }
 }
@@ -100,6 +103,8 @@ Request Body :
 
 ```json
 {
+  "name": "syam",
+  "email" : "syam@example.com",
   "password" : "new password" // put if only want to update password
 }
 ```
@@ -109,6 +114,7 @@ Response Body (Success) :
 ```json
 {
   "data" : {
+    "name": "syam",
     "userId": "123e4567-e89b-12d3-a456-426614174000",
     "email" : "syam@example.com"
   }

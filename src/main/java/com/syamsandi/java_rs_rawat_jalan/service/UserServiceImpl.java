@@ -3,6 +3,7 @@ package com.syamsandi.java_rs_rawat_jalan.service;
 import com.syamsandi.java_rs_rawat_jalan.entity.User;
 import com.syamsandi.java_rs_rawat_jalan.entity.UserProfile;
 import com.syamsandi.java_rs_rawat_jalan.model.RegisterUserRequest;
+import com.syamsandi.java_rs_rawat_jalan.model.UpdateUserRequest;
 import com.syamsandi.java_rs_rawat_jalan.model.UserResponse;
 import com.syamsandi.java_rs_rawat_jalan.repository.UserProfileRepository;
 import com.syamsandi.java_rs_rawat_jalan.repository.UserRepository;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -49,6 +51,7 @@ public class UserServiceImpl implements UserService {
     userProfileRepository.save(userProfile);
   }
 
+  @Transactional(readOnly = true)
   @Override
   public UserResponse get(User user) {
 
@@ -56,12 +59,38 @@ public class UserServiceImpl implements UserService {
         () -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized")
     );
 
+    return toUserResponse(user,userProfile);
+  }
+
+  @Transactional
+  @Override
+  public UserResponse update(UpdateUserRequest request, User user) {
+    validatorService.validate(request);
+
+    if(Objects.nonNull(request.getEmail())){
+      user.setEmail(request.getEmail());
+    }
+    if(Objects.nonNull(request.getPassword())){
+      user.setPassword(BCrypt.hashpw(request.getPassword(),BCrypt.gensalt()));
+    }
+    userRepository.save(user);
+
+    UserProfile userProfile = userProfileRepository.findFirstByUser(user).orElseThrow(
+        () -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized")
+    );
+
+
+    return toUserResponse(user,userProfile);
+
+  }
+
+  private UserResponse toUserResponse (User user, UserProfile userProfile){
     return UserResponse.builder()
-        .id(user.getId())
         .name(userProfile.getName())
         .email(user.getEmail())
-        .password(user.getPassword())
+        .id(user.getId())
         .build();
   }
+
 
 }

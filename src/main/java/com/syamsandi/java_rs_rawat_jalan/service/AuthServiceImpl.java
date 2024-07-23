@@ -44,6 +44,7 @@ public class AuthServiceImpl implements AuthService {
 
   }
 
+  @Transactional
   @Override
   public void logout(User user) {
     user.setToken(null);

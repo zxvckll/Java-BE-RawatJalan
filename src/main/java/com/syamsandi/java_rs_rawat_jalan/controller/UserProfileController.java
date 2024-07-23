@@ -6,6 +6,7 @@ import com.syamsandi.java_rs_rawat_jalan.model.UserProfileResponse;
 import com.syamsandi.java_rs_rawat_jalan.model.WebResponse;
 import com.syamsandi.java_rs_rawat_jalan.service.UserProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,6 +23,14 @@ public class UserProfileController {
     userProfileService.create(request,user);
     return WebResponse.<String>builder()
         .data("OK")
+        .build();
+  }
+
+  @GetMapping(path = "/api/users/current/profile")
+  public WebResponse<UserProfileResponse> get(User user){
+    UserProfileResponse response = userProfileService.get(user);
+    return WebResponse.<UserProfileResponse>builder()
+        .data(response)
         .build();
   }
 

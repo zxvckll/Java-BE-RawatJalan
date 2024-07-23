@@ -3,6 +3,7 @@ package com.syamsandi.java_rs_rawat_jalan.controller;
 import com.syamsandi.java_rs_rawat_jalan.entity.User;
 import com.syamsandi.java_rs_rawat_jalan.entity.UserProfile;
 import com.syamsandi.java_rs_rawat_jalan.model.RegisterUserRequest;
+import com.syamsandi.java_rs_rawat_jalan.model.UpdateUserRequest;
 import com.syamsandi.java_rs_rawat_jalan.model.UserResponse;
 import com.syamsandi.java_rs_rawat_jalan.model.WebResponse;
 import com.syamsandi.java_rs_rawat_jalan.repository.UserProfileRepository;
@@ -61,7 +62,7 @@ class UserControllerTest {
   }
 
   @Test
-  void testRegisterSuccess() throws Exception{
+  void registerSuccess() throws Exception{
     RegisterUserRequest request = new RegisterUserRequest();
     request.setName("test");
     request.setPassword("rahasia");
@@ -111,8 +112,34 @@ class UserControllerTest {
       WebResponse<UserResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
       });
       assertNotNull(response.getErrors());
+    });
+  }
+
+  @Test
+  void updateSuccess() throws Exception{
+    UpdateUserRequest request = new UpdateUserRequest();
+    request.setPassword("rahasia123");
+    request.setEmail("Test@example.com");
+
+    mockMvc.perform(
+        patch("/api/users/current")
+            .header("X-API-TOKEN","test")
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request))
+    ).andExpectAll(
+        status().isOk()
+    ).andDo(result -> {
+      WebResponse<UserResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+      });
+      assertNull(response.getErrors());
+      User userDb = userRepository.findFirstByEmail("Test@example.com").orElse(null);
+      UserProfile userProfileDb = userProfileRepository.findFirstByUser(userDb).orElse(null);
+      assertEquals(request.getEmail(),response.getData().getEmail());
+      assertEquals(userProfileDb.getName(),response.getData().getName());
 
     });
   }
+
 
 }

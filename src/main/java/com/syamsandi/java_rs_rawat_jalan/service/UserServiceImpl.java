@@ -3,6 +3,7 @@ package com.syamsandi.java_rs_rawat_jalan.service;
 import com.syamsandi.java_rs_rawat_jalan.entity.User;
 import com.syamsandi.java_rs_rawat_jalan.entity.UserProfile;
 import com.syamsandi.java_rs_rawat_jalan.model.RegisterUserRequest;
+import com.syamsandi.java_rs_rawat_jalan.model.UserResponse;
 import com.syamsandi.java_rs_rawat_jalan.repository.UserProfileRepository;
 import com.syamsandi.java_rs_rawat_jalan.repository.UserRepository;
 import com.syamsandi.java_rs_rawat_jalan.security.BCrypt;
@@ -27,19 +28,18 @@ public class UserServiceImpl implements UserService {
   private ValidatorService validatorService;
 
 
-
   @Transactional
   @Override
-  public void register(RegisterUserRequest request){
+  public void register(RegisterUserRequest request) {
     validatorService.validate(request);
-    if(userRepository.existsByEmail(request.getEmail())){
-      throw  new ResponseStatusException(HttpStatus.BAD_REQUEST,"Email already registered");
+    if (userRepository.existsByEmail(request.getEmail())) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already registered");
     }
 
     User user = new User();
     user.setId(UUID.randomUUID());
     user.setEmail(request.getEmail());
-    user.setPassword(BCrypt.hashpw(request.getPassword(),BCrypt.gensalt()));
+    user.setPassword(BCrypt.hashpw(request.getPassword(), BCrypt.gensalt()));
     userRepository.save(user);
 
     UserProfile userProfile = new UserProfile();
@@ -47,6 +47,21 @@ public class UserServiceImpl implements UserService {
     userProfile.setUser(user);
     userProfile.setName(request.getName());
     userProfileRepository.save(userProfile);
+  }
+
+  @Override
+  public UserResponse get(User user) {
+
+    UserProfile userProfile = userProfileRepository.findFirstByUser(user).orElseThrow(
+        () -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized")
+    );
+
+    return UserResponse.builder()
+        .id(user.getId())
+        .name(userProfile.getName())
+        .email(user.getEmail())
+        .password(user.getPassword())
+        .build();
   }
 
 }

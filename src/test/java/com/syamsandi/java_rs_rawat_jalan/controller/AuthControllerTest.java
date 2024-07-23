@@ -41,11 +41,13 @@ class AuthControllerTest {
     user.setId(UUID.randomUUID());
     user.setEmail("syam@gmail.com");
     user.setPassword(BCrypt.hashpw("rahasia",BCrypt.gensalt()));
+    user.setToken("test");
+    user.setTokenExpiredAt(System.currentTimeMillis() + 1000000000L);
     userRepository.save(user);
   }
 
   @Test
-  void LoginSuccess() throws Exception{
+  void loginSuccess() throws Exception{
     LoginUserRequest loginUserRequest = new LoginUserRequest();
     loginUserRequest.setEmail("syam@gmail.com");
     loginUserRequest.setPassword("rahasia");
@@ -71,7 +73,7 @@ class AuthControllerTest {
   }
 
   @Test
-  void LoginFailedWrongPassword() throws Exception{
+  void loginFailedWrongPassword() throws Exception{
     LoginUserRequest loginUserRequest = new LoginUserRequest();
     loginUserRequest.setEmail("syam@gmail.com");
     loginUserRequest.setPassword("rahasiaa");
@@ -87,8 +89,51 @@ class AuthControllerTest {
       WebResponse<TokenResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
       });
       assertNotNull(response.getErrors());
+    });
+  }
+  @Test
+  void logoutSuccess() throws Exception{
+    mockMvc.perform(
+        delete("/api/auth/logout")
+            .header("X-API-TOKEN","test")
 
+    ).andExpectAll(
+        status().isOk()
+    ).andDo(result -> {
+      WebResponse<String> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+      });
+      assertNull(response.getErrors());
+    });
+  }
 
+  @Test
+  void logoutFailedWrongToken() throws Exception{
+    mockMvc.perform(
+        delete("/api/auth/logout")
+            .header("X-API-TOKEN","testa")
+    ).andExpectAll(
+        status().isUnauthorized()
+    ).andDo(result -> {
+      WebResponse<String> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+      });
+      assertNotNull(response.getErrors());
+    });
+  }
+
+  @Test
+  void logoutFailedTokenExpired() throws Exception{
+    User user = userRepository.findFirstByEmail("syam@gmail.com").orElse(null);
+    user.setTokenExpiredAt(System.currentTimeMillis() - 100000L);
+    userRepository.save(user);
+    mockMvc.perform(
+        delete("/api/auth/logout")
+            .header("X-API-TOKEN","testa")
+    ).andExpectAll(
+        status().isUnauthorized()
+    ).andDo(result -> {
+      WebResponse<String> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+      });
+      assertNotNull(response.getErrors());
     });
   }
 }

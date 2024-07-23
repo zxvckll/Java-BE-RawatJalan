@@ -1,11 +1,13 @@
 package com.syamsandi.java_rs_rawat_jalan.controller;
 
+import com.syamsandi.java_rs_rawat_jalan.entity.User;
 import com.syamsandi.java_rs_rawat_jalan.model.LoginUserRequest;
 import com.syamsandi.java_rs_rawat_jalan.model.TokenResponse;
 import com.syamsandi.java_rs_rawat_jalan.model.WebResponse;
 import com.syamsandi.java_rs_rawat_jalan.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,5 +27,12 @@ public class AuthController {
     return WebResponse.<TokenResponse>builder()
         .data(tokenResponse)
         .build();
+  }
+
+  @DeleteMapping(path = "/api/auth/logout",
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public WebResponse<String> logout(User user) {
+    authService.logout(user);
+    return WebResponse.<String>builder().data("OK").build();
   }
 }

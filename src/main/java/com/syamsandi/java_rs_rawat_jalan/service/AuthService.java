@@ -10,4 +10,5 @@ public interface AuthService {
   TokenResponse login (LoginUserRequest request);
 
   void  logout (User user);
+
 }

@@ -26,6 +26,11 @@ public class RoleServiceImpl implements RoleService {
   @Override
   public RoleResponse create(RoleRequest request) {
     validatorService.validate(request);
+
+    if(roleRepository.existsByName(request.getName())){
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "UserRole already exist");
+    }
+
     Role role = new Role();
     role.setId(UUID.randomUUID());
     role.setName(request.getName());

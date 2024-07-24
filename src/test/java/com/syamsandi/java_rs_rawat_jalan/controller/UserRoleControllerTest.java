@@ -96,6 +96,7 @@ class UserRoleControllerTest {
 
     mockMvc.perform(
         post("/api/users/roles")
+            .header("X-API-TOKEN","test")
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request))
@@ -113,6 +114,7 @@ class UserRoleControllerTest {
   void getSuccess() throws Exception {
     mockMvc.perform(
         get("/api/users/roles/{userRoleId}",USER_ROLE_ID)
+            .header("X-API-TOKEN","test")
     ).andExpectAll(
         status().isOk()
     ).andDo(result -> {
@@ -141,7 +143,9 @@ class UserRoleControllerTest {
 
     mockMvc.perform(
         get("/api/users/roles")
+            .header("X-API-TOKEN","test")
             .queryParam("user_id",USER_ID.toString())
+
     ).andExpectAll(
         status().isOk()
     ).andDo(result -> {
@@ -160,6 +164,7 @@ class UserRoleControllerTest {
 
     mockMvc.perform(
         put("/api/users/roles/{userRoleId}",USER_ROLE_ID)
+            .header("X-API-TOKEN","test")
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request))
@@ -178,6 +183,7 @@ class UserRoleControllerTest {
   void deleteSuccess() throws Exception {
     mockMvc.perform(
         delete("/api/users/roles/{userRoleId}",USER_ROLE_ID)
+            .header("X-API-TOKEN","test")
     ).andExpectAll(
         status().isOk()
     ).andDo(result -> {

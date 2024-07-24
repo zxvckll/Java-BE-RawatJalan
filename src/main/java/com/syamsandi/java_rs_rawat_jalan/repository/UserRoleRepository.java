@@ -18,6 +18,7 @@ public interface UserRoleRepository extends JpaRepository<UserRole, UUID>, JpaSp
 
   Page<UserRole> findAllByUserAndRole(User user, Role role, Pageable pageable);
 
+  List<UserRole> findAllByUser(User user);
   Boolean existsByUserAndRole(User user, Role role);
 
   Page<UserRole> findAllByUser(User user,Pageable pageable);

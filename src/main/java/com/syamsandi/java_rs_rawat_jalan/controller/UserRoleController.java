@@ -1,5 +1,6 @@
 package com.syamsandi.java_rs_rawat_jalan.controller;
 
+import com.syamsandi.java_rs_rawat_jalan.entity.User;
 import com.syamsandi.java_rs_rawat_jalan.model.*;
 import com.syamsandi.java_rs_rawat_jalan.service.RoleService;
 import com.syamsandi.java_rs_rawat_jalan.service.UserRoleService;
@@ -20,8 +21,8 @@ public class UserRoleController {
   @PostMapping(path = "/api/users/roles",
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
-  public WebResponse<UserRoleResponse> create(@RequestBody UserRoleRequest request) {
-    UserRoleResponse response = userRoleService.create(request);
+  public WebResponse<UserRoleResponse> create(User user, @RequestBody UserRoleRequest request) {
+    UserRoleResponse response = userRoleService.create(user,request);
     return WebResponse.<UserRoleResponse>builder()
         .data(response)
         .build();
@@ -29,9 +30,9 @@ public class UserRoleController {
 
   @GetMapping(path = "/api/users/roles/{userRoleId}",
       produces = MediaType.APPLICATION_JSON_VALUE)
-  public WebResponse<UserRoleResponse> get(@PathVariable("userRoleId") String userRoleId) {
+  public WebResponse<UserRoleResponse> get(User user, @PathVariable("userRoleId") String userRoleId) {
     UUID roleUuid = UUID.fromString(userRoleId);
-    UserRoleResponse response = userRoleService.get(roleUuid);
+    UserRoleResponse response = userRoleService.get(user,roleUuid);
     return WebResponse.<UserRoleResponse>builder()
         .data(response)
         .build();
@@ -39,7 +40,8 @@ public class UserRoleController {
 
   @GetMapping(path = "/api/users/roles",
       produces = MediaType.APPLICATION_JSON_VALUE)
-  public WebResponse<List<UserRoleResponse>> getAll(@RequestParam(value = "user_id", required = false) String userId,
+  public WebResponse<List<UserRoleResponse>> getAll(User user,
+                                                    @RequestParam(value = "user_id", required = false) String userId,
                                                     @RequestParam(value = "role_id", required = false) String roleId,
                                                     @RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
                                                     @RequestParam(value = "size", required = false, defaultValue = "10") Integer size) {
@@ -52,7 +54,7 @@ public class UserRoleController {
     request.setPage(page);
     request.setSize(size);
 
-    Page<UserRoleResponse> responses = userRoleService.getAll(request);
+    Page<UserRoleResponse> responses = userRoleService.getAll(user,request);
 
     return WebResponse.<List<UserRoleResponse>>builder()
         .data(responses.getContent())
@@ -67,9 +69,11 @@ public class UserRoleController {
   @PutMapping(path = "/api/users/roles/{userRoleId}",
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
-  public WebResponse<UserRoleResponse> update(@RequestBody UserRoleRequest request, @PathVariable("userRoleId") String userRoleId) {
+  public WebResponse<UserRoleResponse> update(User user,
+                                              @RequestBody UserRoleRequest request,
+                                              @PathVariable("userRoleId") String userRoleId) {
     UUID roleUuid = UUID.fromString(userRoleId);
-    UserRoleResponse response = userRoleService.update(request, roleUuid);
+    UserRoleResponse response = userRoleService.update(user,request, roleUuid);
     return WebResponse.<UserRoleResponse>builder()
         .data(response)
         .build();
@@ -77,9 +81,10 @@ public class UserRoleController {
 
   @DeleteMapping(path = "/api/users/roles/{userRoleId}",
       produces = MediaType.APPLICATION_JSON_VALUE)
-  public WebResponse<String> delete(@PathVariable("userRoleId") String userRoleId) {
+  public WebResponse<String> delete(User user,
+                                    @PathVariable("userRoleId") String userRoleId) {
     UUID roleUuid = UUID.fromString(userRoleId);
-    userRoleService.delete(roleUuid);
+    userRoleService.delete(user,roleUuid);
     return WebResponse.<String>builder()
         .data("OK")
         .build();

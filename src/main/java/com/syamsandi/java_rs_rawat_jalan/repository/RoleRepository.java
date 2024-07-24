@@ -12,6 +12,8 @@ public interface RoleRepository extends JpaRepository<Role, UUID> {
 
 Optional<Role> findFirstById(UUID id);
 
+
+Optional<Role> findFirstByName(String name);
 Boolean existsByName(String name);
 
 }

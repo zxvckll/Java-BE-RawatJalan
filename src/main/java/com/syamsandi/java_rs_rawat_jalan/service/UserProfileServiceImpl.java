@@ -29,12 +29,15 @@ public class UserProfileServiceImpl implements UserProfileService {
   @Autowired
   private ValidatorService validatorService;
 
+
   private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
   @Transactional
   @Override
   public void create(UserProfileRequest request, User user) {
     validatorService.validate(request);
+
+
 
     userProfileRepository.findFirstByUser(user).ifPresent(profile -> {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User profile already created");

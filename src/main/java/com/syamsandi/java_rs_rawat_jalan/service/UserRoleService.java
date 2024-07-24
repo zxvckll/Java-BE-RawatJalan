@@ -1,6 +1,7 @@
 package com.syamsandi.java_rs_rawat_jalan.service;
 
 
+import com.syamsandi.java_rs_rawat_jalan.entity.User;
 import com.syamsandi.java_rs_rawat_jalan.model.SearchUserRoleRequest;
 import com.syamsandi.java_rs_rawat_jalan.model.UserRoleRequest;
 import com.syamsandi.java_rs_rawat_jalan.model.UserRoleResponse;
@@ -11,14 +12,14 @@ import java.util.UUID;
 
 public interface UserRoleService {
 
-  UserRoleResponse create(UserRoleRequest request);
+  UserRoleResponse create(User user, UserRoleRequest request);
 
-  UserRoleResponse get(UUID id);
+  UserRoleResponse get(User user,UUID id);
 
-  Page<UserRoleResponse> getAll(SearchUserRoleRequest request);
+  Page<UserRoleResponse> getAll(User user,SearchUserRoleRequest request);
 
-  UserRoleResponse update(UserRoleRequest request,UUID id);
+  UserRoleResponse update(User user,UserRoleRequest request,UUID id);
 
-  void delete(UUID id);
+  void delete(User user,UUID id);
 
 }

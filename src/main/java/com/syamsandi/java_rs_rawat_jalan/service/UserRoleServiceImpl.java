@@ -39,10 +39,14 @@ public class UserRoleServiceImpl implements UserRoleService {
   @Autowired
   private RoleRepository roleRepository;
 
+  @Autowired
+  private UserRoleUtils userRoleUtils;
+
   @Transactional
   @Override
-  public UserRoleResponse create(UserRoleRequest request) {
+  public UserRoleResponse create(User checkUser,UserRoleRequest request) {
     validatorService.validate(request);
+    userRoleUtils.checkAdminRole(checkUser);
 
     User user = userRepository.findById(request.getUser_id()).orElseThrow(
         () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found")
@@ -67,7 +71,9 @@ public class UserRoleServiceImpl implements UserRoleService {
 
   @Transactional(readOnly = true)
   @Override
-  public UserRoleResponse get(UUID id) {
+  public UserRoleResponse get(User user,UUID id) {
+    userRoleUtils.checkAdminRole(user);
+
     UserRole userRole = userRoleRepository.findById(id).orElseThrow(
         () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "User Role not found")
     );
@@ -76,8 +82,10 @@ public class UserRoleServiceImpl implements UserRoleService {
 
   @Transactional(readOnly = true)
   @Override
-  public Page<UserRoleResponse> getAll(SearchUserRoleRequest request) {
+  public Page<UserRoleResponse> getAll(User checkUser,SearchUserRoleRequest request) {
     validatorService.validate(request);
+
+    userRoleUtils.checkAdminRole(checkUser);
 
     // Create Pageable object for pagination
     Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
@@ -115,7 +123,9 @@ public class UserRoleServiceImpl implements UserRoleService {
 
   @Transactional
   @Override
-  public UserRoleResponse update(UserRoleRequest request, UUID id) {
+  public UserRoleResponse update(User checkUser,UserRoleRequest request, UUID id) {
+    userRoleUtils.checkAdminRole(checkUser);
+
     UserRole userRole = userRoleRepository.findById(id).orElseThrow(
         () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "User Role not found")
     );
@@ -134,7 +144,9 @@ public class UserRoleServiceImpl implements UserRoleService {
 
   @Transactional
   @Override
-  public void delete(UUID id) {
+  public void delete(User user,UUID id) {
+    userRoleUtils.checkAdminRole(user);
+
     UserRole userRole = userRoleRepository.findById(id).orElseThrow(
         () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "User Role not found")
     );

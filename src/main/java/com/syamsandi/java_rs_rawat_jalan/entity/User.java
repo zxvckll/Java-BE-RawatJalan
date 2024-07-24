@@ -38,7 +38,7 @@ public class User {
   @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
   private PatientProfile patientProfile;
 
-  @OneToMany(mappedBy = "user")
+  @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
   private List<UserRole> userRoles;
 
 

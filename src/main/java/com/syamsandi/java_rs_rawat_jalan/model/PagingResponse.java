@@ -1,6 +1,5 @@
 package com.syamsandi.java_rs_rawat_jalan.model;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,11 +9,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class WebResponse<T> {
+public class PagingResponse {
 
-  private T data;
+  private Integer currentPage;
 
-  private String errors;
+  private Integer totalPage;
 
-  private PagingResponse paging;
+  private Integer size;
 }

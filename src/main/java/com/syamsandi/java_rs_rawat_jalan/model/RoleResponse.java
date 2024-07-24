@@ -1,20 +1,19 @@
 package com.syamsandi.java_rs_rawat_jalan.model;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class WebResponse<T> {
+public class RoleResponse {
 
-  private T data;
+  private UUID id;
 
-  private String errors;
-
-  private PagingResponse paging;
+  private String name;
 }

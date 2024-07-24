@@ -67,7 +67,7 @@ CREATE TABLE patient_profile (
 -- Create the roles table
 CREATE TABLE roles (
     id UUID  PRIMARY KEY,
-    role_name VARCHAR(50) NOT NULL UNIQUE
+    name VARCHAR(50) NOT NULL UNIQUE
 );
 
 -- Create the user_roles table

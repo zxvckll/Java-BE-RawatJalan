@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -14,14 +13,17 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "roles")
-public class Role {
+@Table(name = "user_roles")
+public class UserRole {
 
   @Id
   private UUID id;
 
-  private String name;
+  @ManyToOne
+  @JoinColumn(name = "user_id")
+  private User user;
 
-  @OneToMany(mappedBy = "role",cascade =CascadeType.ALL)
-  private List<UserRole> userRoles;
+  @ManyToOne
+  @JoinColumn(name = "role_id")
+  private Role role;
 }

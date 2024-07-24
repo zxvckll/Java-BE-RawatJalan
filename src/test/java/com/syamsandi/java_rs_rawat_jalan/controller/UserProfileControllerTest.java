@@ -16,7 +16,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Optional;
 import java.util.UUID;
 
 
@@ -70,7 +69,7 @@ class UserProfileControllerTest {
 
   @Test
   void createSuccess() throws Exception{
-    CreateUserProfileRequest request = new CreateUserProfileRequest();
+    UserProfileRequest request = new UserProfileRequest();
     request.setName("test");
     request.setName("sam");
     request.setImageUrl("example.com/img");
@@ -92,6 +91,7 @@ class UserProfileControllerTest {
       assertEquals("OK", response.getData());
       User user = userRepository.findFirstByEmail("syam@gmail.com").orElse(null);
       UserProfile userProfile = userProfileRepository.findFirstByUser(user).orElse(null);
+      assertNotNull(userProfile.getId());
       assertEquals(request.getName(),userProfile.getName());
       assertEquals(request.getAddress(),userProfile.getAddress());
       assertEquals(request.getDateOfBirth(),"01-01-2001");
@@ -123,12 +123,53 @@ class UserProfileControllerTest {
       WebResponse<UserProfileResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
       });
       assertNull(response.getErrors());
+      assertNotNull(response.getData().getId());
       assertEquals(response.getData().getName(),userProfile.getName());
       assertEquals(response.getData().getAddress(),userProfile.getAddress());
       assertEquals(response.getData().getDateOfBirth(),"01-01-2001");
       assertEquals(response.getData().getImageUrl(),userProfile.getImageUrl());
     });
+  }
 
+  @Test
+  void updateSuccess() throws Exception{
+    User user = userRepository.findFirstByEmail("syam@gmail.com").orElse(null);
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+    LocalDate dateOfBirth = LocalDate.parse("01-01-2001", formatter);
+
+    UserProfile userProfile = new UserProfile();
+    userProfile.setId(UUID.randomUUID());
+    userProfile.setUser(user);
+    userProfile.setName("sam");
+    userProfile.setImageUrl("example.com/img");
+    userProfile.setAddress("Sidoarjo Wage");
+    userProfile.setDateOfBirth(dateOfBirth);
+    userProfileRepository.save(userProfile);
+
+    UserProfileRequest request = new UserProfileRequest();
+    request.setName("test");
+    request.setName("test");
+    request.setImageUrl("example.com/img");
+    request.setAddress("test test");
+    request.setDateOfBirth("02-02-2002");
+
+    mockMvc.perform(
+        put("/api/users/current/profile")
+            .header("X-API-TOKEN","test")
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request))
+    ).andExpectAll(
+        status().isOk()
+    ).andDo(result -> {
+      WebResponse<UserProfileResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+      });
+      assertEquals(request.getName(),response.getData().getName());
+      assertEquals(request.getAddress(),response.getData().getAddress());
+      assertEquals(request.getDateOfBirth(),response.getData().getDateOfBirth());
+      assertEquals(request.getImageUrl(),response.getData().getImageUrl());
+      assertNotNull(response.getData().getId());
+    });
 
   }
 }

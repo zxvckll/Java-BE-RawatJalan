@@ -2,8 +2,7 @@ package com.syamsandi.java_rs_rawat_jalan.service;
 
 import com.syamsandi.java_rs_rawat_jalan.entity.User;
 import com.syamsandi.java_rs_rawat_jalan.entity.UserProfile;
-import com.syamsandi.java_rs_rawat_jalan.model.CreateUserProfileRequest;
-
+import com.syamsandi.java_rs_rawat_jalan.model.UserProfileRequest;
 import com.syamsandi.java_rs_rawat_jalan.model.UserProfileResponse;
 import com.syamsandi.java_rs_rawat_jalan.repository.UserProfileRepository;
 import com.syamsandi.java_rs_rawat_jalan.repository.UserRepository;
@@ -30,15 +29,16 @@ public class UserProfileServiceImpl implements UserProfileService {
   @Autowired
   private ValidatorService validatorService;
 
+  private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
   @Transactional
   @Override
-  public void create(CreateUserProfileRequest request, User user) {
+  public void create(UserProfileRequest request, User user) {
     validatorService.validate(request);
-    UserProfile userProfileDB = userProfileRepository.findFirstByUser(user).orElse(null);
-    if (Objects.nonNull(userProfileDB)) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "user profile already created");
-    }
+
+    userProfileRepository.findFirstByUser(user).ifPresent(profile -> {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User profile already created");
+    });
 
     UserProfile userProfile = new UserProfile();
     userProfile.setId(UUID.randomUUID());
@@ -46,42 +46,52 @@ public class UserProfileServiceImpl implements UserProfileService {
     userProfile.setName(request.getName());
     userProfile.setAddress(request.getAddress());
     userProfile.setImageUrl(request.getImageUrl());
-
-
-    if (Objects.nonNull(request.getDateOfBirth())) {
-      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-      LocalDate dateOfBirth = LocalDate.parse(request.getDateOfBirth(), formatter);
-      userProfile.setDateOfBirth(dateOfBirth);
-    }
+    setBirthDate(request.getDateOfBirth(), userProfile);
 
     userProfileRepository.save(userProfile);
   }
 
-
-
   @Transactional(readOnly = true)
   @Override
   public UserProfileResponse get(User user) {
-    UserProfile userProfile = userProfileRepository.findFirstByUser(user).orElseThrow(
-        () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "User Profile Not Found"));
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+    UserProfile userProfile = userProfileRepository.findFirstByUser(user)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "User Profile Not Found"));
 
-    return toUserProfileResponse(userProfile, formatter);
+    return toUserProfileResponse(userProfile);
   }
 
-  public UserProfileResponse toUserProfileResponse(UserProfile userProfile, DateTimeFormatter formatter) {
-    LocalDate dateOfBirth = userProfile.getDateOfBirth();
-    String dateOfBirthString = dateOfBirth.format(formatter);
+  @Transactional
+  @Override
+  public UserProfileResponse update(UserProfileRequest request, User user) {
+    UserProfile userProfile = userProfileRepository.findFirstByUser(user)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "User Profile Not Found"));
+
+    userProfile.setName(request.getName());
+    userProfile.setAddress(request.getAddress());
+    userProfile.setImageUrl(request.getImageUrl());
+    setBirthDate(request.getDateOfBirth(), userProfile);
+
+    userProfileRepository.save(userProfile);
+
+    return toUserProfileResponse(userProfile);
+  }
+
+  private void setBirthDate(String dateOfBirth, UserProfile userProfile) {
+    if (Objects.nonNull(dateOfBirth)) {
+      LocalDate birthDate = LocalDate.parse(dateOfBirth, DATE_FORMATTER);
+      userProfile.setDateOfBirth(birthDate);
+    }
+  }
+
+  private UserProfileResponse toUserProfileResponse(UserProfile userProfile) {
+    String dateOfBirthString = userProfile.getDateOfBirth().format(DATE_FORMATTER);
 
     return UserProfileResponse.builder()
+        .id(userProfile.getId())
         .name(userProfile.getName())
         .address(userProfile.getAddress())
         .imageUrl(userProfile.getImageUrl())
         .dateOfBirth(dateOfBirthString)
         .build();
   }
-
-
-
-
 }

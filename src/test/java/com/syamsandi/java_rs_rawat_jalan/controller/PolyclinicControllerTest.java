@@ -2,13 +2,15 @@ package com.syamsandi.java_rs_rawat_jalan.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.syamsandi.java_rs_rawat_jalan.entity.Polyclinic;
 import com.syamsandi.java_rs_rawat_jalan.entity.Role;
 import com.syamsandi.java_rs_rawat_jalan.entity.User;
-import com.syamsandi.java_rs_rawat_jalan.entity.UserProfile;
 import com.syamsandi.java_rs_rawat_jalan.entity.UserRole;
-import com.syamsandi.java_rs_rawat_jalan.model.RoleRequest;
+import com.syamsandi.java_rs_rawat_jalan.model.PolyclinicRequest;
+import com.syamsandi.java_rs_rawat_jalan.model.PolyclinicRequest;
 import com.syamsandi.java_rs_rawat_jalan.model.RoleResponse;
 import com.syamsandi.java_rs_rawat_jalan.model.WebResponse;
+import com.syamsandi.java_rs_rawat_jalan.repository.PolyclinicRepository;
 import com.syamsandi.java_rs_rawat_jalan.repository.RoleRepository;
 import com.syamsandi.java_rs_rawat_jalan.repository.UserRepository;
 import com.syamsandi.java_rs_rawat_jalan.repository.UserRoleRepository;
@@ -21,23 +23,22 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class RoleControllerTest {
+class PolyclinicControllerTest {
 
   @Autowired
   private MockMvc mockMvc;
 
   @Autowired
-  private RoleRepository roleRepository;
+  private PolyclinicRepository polyclinicRepository;
 
   @Autowired
   private ObjectMapper objectMapper;
@@ -45,15 +46,21 @@ class RoleControllerTest {
   private static final UUID USER_ID = UUID.randomUUID();
   private static final UUID ROLE_ID = UUID.randomUUID();
   private static final UUID USER_ROLE_ID = UUID.randomUUID();
+
+  private static final UUID POLYCLINIC_ID = UUID.randomUUID();
   @Autowired
   private UserRepository userRepository;
   @Autowired
   private UserRoleRepository userRoleRepository;
+  
+  @Autowired
+  private RoleRepository roleRepository;
 
   @BeforeEach
   void setUp() {
     userRepository.deleteAll();
     roleRepository.deleteAll();
+    polyclinicRepository.deleteAll();
     userRoleRepository.deleteAll();
 
 
@@ -75,15 +82,20 @@ class RoleControllerTest {
     userRole.setUser(user);
     userRole.setRole(role);
     userRoleRepository.save(userRole);
+
+    Polyclinic polyclinic = new Polyclinic();
+    polyclinic.setId(POLYCLINIC_ID);
+    polyclinic.setName("Gigi");
+    polyclinicRepository.save(polyclinic);
   }
 
   @Test
   void createSuccess() throws Exception{
-    RoleRequest request = new RoleRequest();
+    PolyclinicRequest request = new PolyclinicRequest();
     request.setName("doctor");
 
     mockMvc.perform(
-        post("/api/roles")
+        post("/api/polyclinics")
             .header("X-API-TOKEN","test")
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON)
@@ -101,11 +113,11 @@ class RoleControllerTest {
 
   @Test
   void createFailedToken() throws Exception{
-    RoleRequest request = new RoleRequest();
+    PolyclinicRequest request = new PolyclinicRequest();
     request.setName("doctor");
 
     mockMvc.perform(
-        post("/api/roles")
+        post("/api/polyclinics")
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request))
@@ -121,7 +133,7 @@ class RoleControllerTest {
   @Test
   void getSuccess() throws Exception{
     mockMvc.perform(
-        get("/api/roles/{roleId}",ROLE_ID.toString())
+        get("/api/polyclinics/{polyclinicId}",POLYCLINIC_ID.toString())
             .header("X-API-TOKEN","test")
     ).andExpectAll(
         status().isOk()
@@ -136,7 +148,7 @@ class RoleControllerTest {
   @Test
   void getFailedToken() throws Exception{
     mockMvc.perform(
-        get("/api/roles/{roleId}",ROLE_ID.toString())
+        get("/api/polyclinics/{polyclinicId}",POLYCLINIC_ID.toString())
     ).andExpectAll(
         status().isUnauthorized()
     ).andDo(result -> {
@@ -149,14 +161,14 @@ class RoleControllerTest {
   @Test
   void getAllSuccess() throws Exception{
     for (int i = 0; i < 10; i++) {
-      Role role = new Role();
-      role.setId(UUID.randomUUID());
-      role.setName("role ke-" + i);
-      roleRepository.save(role);
+      Polyclinic polyclinic = new Polyclinic();
+      polyclinic.setId(UUID.randomUUID());
+      polyclinic.setName("polyclinic ke-" + i);
+      polyclinicRepository.save(polyclinic);
     }
 
     mockMvc.perform(
-        get("/api/roles")
+        get("/api/polyclinics")
             .header("X-API-TOKEN","test")
     ).andExpectAll(
         status().isOk()
@@ -171,14 +183,14 @@ class RoleControllerTest {
   @Test
   void getAllFailedToken() throws Exception{
     for (int i = 0; i < 10; i++) {
-      Role role = new Role();
-      role.setId(UUID.randomUUID());
-      role.setName("role ke-" + i);
-      roleRepository.save(role);
+      Polyclinic polyclinic = new Polyclinic();
+      polyclinic.setId(UUID.randomUUID());
+      polyclinic.setName("role ke-" + i);
+      polyclinicRepository.save(polyclinic);
     }
 
     mockMvc.perform(
-        get("/api/roles")
+        get("/api/polyclinics")
     ).andExpectAll(
         status().isUnauthorized()
     ).andDo(result -> {
@@ -190,11 +202,11 @@ class RoleControllerTest {
 
   @Test
   void updateSuccess() throws Exception{
-    RoleRequest request = new RoleRequest();
+    PolyclinicRequest request = new PolyclinicRequest();
     request.setName("test");
 
     mockMvc.perform(
-        put("/api/roles/{roleId}",ROLE_ID.toString())
+        put("/api/polyclinics/{polyclinicId}",POLYCLINIC_ID.toString())
             .header("X-API-TOKEN","test")
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON)
@@ -213,11 +225,11 @@ class RoleControllerTest {
 
   @Test
   void updateFailedToken() throws Exception{
-    RoleRequest request = new RoleRequest();
+    PolyclinicRequest request = new PolyclinicRequest();
     request.setName("test");
 
     mockMvc.perform(
-        put("/api/roles/{roleId}",ROLE_ID.toString())
+        put("/api/polyclinics/{polyclinicId}",POLYCLINIC_ID.toString())
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request))
@@ -234,7 +246,7 @@ class RoleControllerTest {
   @Test
   void deleteSuccess() throws Exception{
     mockMvc.perform(
-        delete("/api/roles/{roleId}",ROLE_ID.toString())
+        delete("/api/polyclinics/{polyclinicId}",POLYCLINIC_ID.toString())
             .header("X-API-TOKEN","test")
     ).andExpectAll(
         status().isOk()
@@ -249,7 +261,7 @@ class RoleControllerTest {
   @Test
   void deleteFailedToken() throws Exception{
     mockMvc.perform(
-        delete("/api/roles/{roleId}",ROLE_ID.toString())
+        delete("/api/polyclinics/{polyclinicId}",POLYCLINIC_ID.toString())
     ).andExpectAll(
         status().isUnauthorized()
     ).andDo(result -> {

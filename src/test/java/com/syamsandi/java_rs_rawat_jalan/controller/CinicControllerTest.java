@@ -2,16 +2,9 @@ package com.syamsandi.java_rs_rawat_jalan.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.syamsandi.java_rs_rawat_jalan.entity.Role;
-import com.syamsandi.java_rs_rawat_jalan.entity.User;
-import com.syamsandi.java_rs_rawat_jalan.entity.UserProfile;
-import com.syamsandi.java_rs_rawat_jalan.entity.UserRole;
-import com.syamsandi.java_rs_rawat_jalan.model.RoleRequest;
-import com.syamsandi.java_rs_rawat_jalan.model.RoleResponse;
-import com.syamsandi.java_rs_rawat_jalan.model.WebResponse;
-import com.syamsandi.java_rs_rawat_jalan.repository.RoleRepository;
-import com.syamsandi.java_rs_rawat_jalan.repository.UserRepository;
-import com.syamsandi.java_rs_rawat_jalan.repository.UserRoleRepository;
+import com.syamsandi.java_rs_rawat_jalan.entity.*;
+import com.syamsandi.java_rs_rawat_jalan.model.*;
+import com.syamsandi.java_rs_rawat_jalan.repository.*;
 import com.syamsandi.java_rs_rawat_jalan.security.BCrypt;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,17 +14,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class RoleControllerTest {
+class CinicControllerTest {
 
   @Autowired
   private MockMvc mockMvc;
@@ -45,16 +37,26 @@ class RoleControllerTest {
   private static final UUID USER_ID = UUID.randomUUID();
   private static final UUID ROLE_ID = UUID.randomUUID();
   private static final UUID USER_ROLE_ID = UUID.randomUUID();
+
+  private static final UUID CLINIC_ID = UUID.randomUUID();
+
+  private static final UUID POLYCLINIC_ID = UUID.randomUUID();
   @Autowired
   private UserRepository userRepository;
   @Autowired
   private UserRoleRepository userRoleRepository;
+  @Autowired
+  private ClinicRepository clinicRepository;
+  @Autowired
+  private PolyclinicRepository polyclinicRepository;
 
   @BeforeEach
   void setUp() {
     userRepository.deleteAll();
     roleRepository.deleteAll();
     userRoleRepository.deleteAll();
+    clinicRepository.deleteAll();
+    polyclinicRepository.deleteAll();
 
 
     User user = new User();
@@ -75,15 +77,26 @@ class RoleControllerTest {
     userRole.setUser(user);
     userRole.setRole(role);
     userRoleRepository.save(userRole);
+
+    Polyclinic polyclinic = new Polyclinic();
+    polyclinic.setId(POLYCLINIC_ID);
+    polyclinic.setName("polyclinic 1");
+    polyclinicRepository.save(polyclinic);
+
+    Clinic clinic = new Clinic();
+    clinic.setId(CLINIC_ID);
+    clinic.setPolyclinic(polyclinic);
+    clinic.setName("clinic 1");
+    clinicRepository.save(clinic);
   }
 
   @Test
   void createSuccess() throws Exception{
-    RoleRequest request = new RoleRequest();
-    request.setName("doctor");
+    ClinicRequest request = new ClinicRequest();
+    request.setName("clinic 2");
 
     mockMvc.perform(
-        post("/api/roles")
+        post("/api/polyclinics/{polyclinicId}/clinics",POLYCLINIC_ID.toString())
             .header("X-API-TOKEN","test")
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON)
@@ -91,7 +104,7 @@ class RoleControllerTest {
     ).andExpectAll(
         status().isOk()
     ).andDo(result -> {
-      WebResponse<RoleResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+      WebResponse<ClinicResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
       });
       assertNull(response.getErrors());
       assertNotNull(response.getData().getId());
@@ -101,18 +114,18 @@ class RoleControllerTest {
 
   @Test
   void createFailedToken() throws Exception{
-    RoleRequest request = new RoleRequest();
+    ClinicRequest request = new ClinicRequest();
     request.setName("doctor");
 
     mockMvc.perform(
-        post("/api/roles")
+        post("/api/polyclinics/{polyclinicId}/clinics",POLYCLINIC_ID.toString())
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request))
     ).andExpectAll(
         status().isUnauthorized()
     ).andDo(result -> {
-      WebResponse<RoleResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+      WebResponse<ClinicResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
       });
       assertNotNull(response.getErrors());
     });
@@ -121,12 +134,12 @@ class RoleControllerTest {
   @Test
   void getSuccess() throws Exception{
     mockMvc.perform(
-        get("/api/roles/{roleId}",ROLE_ID.toString())
+        get("/api/polyclinics/{polyclinicId}/clinics/{clinicId}",POLYCLINIC_ID.toString(), CLINIC_ID.toString())
             .header("X-API-TOKEN","test")
     ).andExpectAll(
         status().isOk()
     ).andDo(result -> {
-      WebResponse<RoleResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+      WebResponse<ClinicResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
       });
       assertNull(response.getErrors());
       assertNotNull(response.getData().getId());
@@ -136,11 +149,11 @@ class RoleControllerTest {
   @Test
   void getFailedToken() throws Exception{
     mockMvc.perform(
-        get("/api/roles/{roleId}",ROLE_ID.toString())
+        get("/api/polyclinics/{polyclinicId}/clinics/{clinicId}",POLYCLINIC_ID.toString(), CLINIC_ID.toString())
     ).andExpectAll(
         status().isUnauthorized()
     ).andDo(result -> {
-      WebResponse<RoleResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+      WebResponse<ClinicResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
       });
       assertNotNull(response.getErrors());
     });
@@ -148,41 +161,41 @@ class RoleControllerTest {
 
   @Test
   void getAllSuccess() throws Exception{
-    for (int i = 0; i < 10; i++) {
-      Role role = new Role();
-      role.setId(UUID.randomUUID());
-      role.setName("role ke-" + i);
-      roleRepository.save(role);
-    }
+    Polyclinic polyclinic = polyclinicRepository.findById(POLYCLINIC_ID).orElse(null);
+    Clinic clinic = new Clinic();
+    clinic.setId(UUID.randomUUID());
+    clinic.setPolyclinic(polyclinic);
+    clinic.setName("clinic 2");
+    clinicRepository.save(clinic);
+
 
     mockMvc.perform(
-        get("/api/roles")
+        get("/api/polyclinics/{polyclinicId}/clinics",POLYCLINIC_ID.toString())
             .header("X-API-TOKEN","test")
     ).andExpectAll(
         status().isOk()
     ).andDo(result -> {
-      WebResponse<List<RoleResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+      WebResponse<List<ClinicResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
       });
       assertNull(response.getErrors());
-      assertEquals(response.getData().size(),11);
+      assertEquals(response.getData().size(),2);
     });
   }
 
   @Test
   void getAllFailedToken() throws Exception{
-    for (int i = 0; i < 10; i++) {
-      Role role = new Role();
-      role.setId(UUID.randomUUID());
-      role.setName("role ke-" + i);
-      roleRepository.save(role);
-    }
-
+    Polyclinic polyclinic = polyclinicRepository.findById(POLYCLINIC_ID).orElse(null);
+    Clinic clinic = new Clinic();
+    clinic.setId(UUID.randomUUID());
+    clinic.setPolyclinic(polyclinic);
+    clinic.setName("clinic 2");
+    clinicRepository.save(clinic);
     mockMvc.perform(
-        get("/api/roles")
+        get("/api/polyclinics/{polyclinicId}/clinics",POLYCLINIC_ID.toString())
     ).andExpectAll(
         status().isUnauthorized()
     ).andDo(result -> {
-      WebResponse<List<RoleResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+      WebResponse<List<ClinicResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
       });
       assertNotNull(response.getErrors());
     });
@@ -190,11 +203,11 @@ class RoleControllerTest {
 
   @Test
   void updateSuccess() throws Exception{
-    RoleRequest request = new RoleRequest();
+    ClinicRequest request = new ClinicRequest();
     request.setName("test");
 
     mockMvc.perform(
-        put("/api/roles/{roleId}",ROLE_ID.toString())
+        put("/api/polyclinics/{polyclinicId}/clinics/{clinicId}",POLYCLINIC_ID.toString(), CLINIC_ID.toString())
             .header("X-API-TOKEN","test")
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON)
@@ -202,7 +215,7 @@ class RoleControllerTest {
     ).andExpectAll(
         status().isOk()
     ).andDo(result -> {
-      WebResponse<RoleResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+      WebResponse<ClinicResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
       });
       assertNull(response.getErrors());
       assertNotNull(response.getData().getId());
@@ -213,18 +226,18 @@ class RoleControllerTest {
 
   @Test
   void updateFailedToken() throws Exception{
-    RoleRequest request = new RoleRequest();
+    ClinicRequest request = new ClinicRequest();
     request.setName("test");
 
     mockMvc.perform(
-        put("/api/roles/{roleId}",ROLE_ID.toString())
+        put("/api/polyclinics/{polyclinicId}/clinics/{clinicId}",POLYCLINIC_ID.toString(), CLINIC_ID.toString())
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request))
     ).andExpectAll(
         status().isUnauthorized()
     ).andDo(result -> {
-      WebResponse<RoleResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+      WebResponse<ClinicResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
       });
       assertNotNull(response.getErrors());
     });
@@ -234,7 +247,7 @@ class RoleControllerTest {
   @Test
   void deleteSuccess() throws Exception{
     mockMvc.perform(
-        delete("/api/roles/{roleId}",ROLE_ID.toString())
+        delete("/api/polyclinics/{polyclinicId}/clinics/{clinicId}",POLYCLINIC_ID.toString(), CLINIC_ID.toString())
             .header("X-API-TOKEN","test")
     ).andExpectAll(
         status().isOk()
@@ -249,7 +262,7 @@ class RoleControllerTest {
   @Test
   void deleteFailedToken() throws Exception{
     mockMvc.perform(
-        delete("/api/roles/{roleId}",ROLE_ID.toString())
+        delete("/api/polyclinics/{polyclinicId}/clinics/{clinicId}",POLYCLINIC_ID.toString(), CLINIC_ID.toString())
     ).andExpectAll(
         status().isUnauthorized()
     ).andDo(result -> {

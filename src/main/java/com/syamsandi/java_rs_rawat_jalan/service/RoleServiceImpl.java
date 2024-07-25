@@ -45,6 +45,8 @@ public class RoleServiceImpl implements RoleService {
     Role role = new Role();
     role.setId(UUID.randomUUID());
     role.setName(request.getName());
+    roleRepository.save(role);
+
     return toRoleResponse(role);
   }
 
@@ -73,11 +75,13 @@ public class RoleServiceImpl implements RoleService {
   @Override
   public RoleResponse update(User user,RoleRequest request, UUID id) {
     validatorService.validate(request);
+    userRoleUtils.checkAdminRole(user);
 
     Role role = roleRepository.findFirstById(id).orElseThrow(
         () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Role not found")
     );
     role.setName(request.getName());
+    roleRepository.save(role);
     return toRoleResponse(role);
   }
 

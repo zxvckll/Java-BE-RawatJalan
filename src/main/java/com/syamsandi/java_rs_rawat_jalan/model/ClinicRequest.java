@@ -2,6 +2,7 @@ package com.syamsandi.java_rs_rawat_jalan.model;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,15 +14,12 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class SearchUserRoleRequest {
-
-  private UUID userId;
-
-  private UUID roleId;
+public class ClinicRequest {
 
   @NotNull
-  private Integer page;
+  private UUID polyclinicId;
 
-  @NotNull
-  private Integer size;
+  @NotBlank
+  @Size(max = 100)
+  private String name;
 }

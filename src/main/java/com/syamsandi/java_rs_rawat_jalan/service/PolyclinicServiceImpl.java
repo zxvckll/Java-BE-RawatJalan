@@ -39,6 +39,8 @@ public class PolyclinicServiceImpl implements PolyclinicService {
     Polyclinic polyclinic = new Polyclinic();
     polyclinic.setId(UUID.randomUUID());
     polyclinic.setName(request.getName());
+    polyclinicRepository.save(polyclinic);
+
     return toPolyclinicResponse(polyclinic);
   }
 
@@ -67,11 +69,14 @@ public class PolyclinicServiceImpl implements PolyclinicService {
   @Override
   public PolyclinicResponse update(User user,PolyclinicRequest request, UUID id) {
     validatorService.validate(request);
+    userRoleUtils.checkAdminRole(user);
 
     Polyclinic polyclinic = polyclinicRepository.findFirstById(id).orElseThrow(
         () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Role not found")
     );
     polyclinic.setName(request.getName());
+    polyclinicRepository.save(polyclinic);
+
     return toPolyclinicResponse(polyclinic);
   }
 

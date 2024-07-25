@@ -3,7 +3,7 @@ package com.syamsandi.java_rs_rawat_jalan.service;
 import com.syamsandi.java_rs_rawat_jalan.entity.Role;
 import com.syamsandi.java_rs_rawat_jalan.entity.User;
 import com.syamsandi.java_rs_rawat_jalan.entity.UserRole;
-import com.syamsandi.java_rs_rawat_jalan.model.SearchUserRoleRequest;
+import com.syamsandi.java_rs_rawat_jalan.model.PagingUserRoleRequest;
 import com.syamsandi.java_rs_rawat_jalan.model.UserRoleRequest;
 import com.syamsandi.java_rs_rawat_jalan.model.UserRoleResponse;
 import com.syamsandi.java_rs_rawat_jalan.repository.RoleRepository;
@@ -20,8 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -82,7 +80,7 @@ public class UserRoleServiceImpl implements UserRoleService {
 
   @Transactional(readOnly = true)
   @Override
-  public Page<UserRoleResponse> getAll(User checkUser,SearchUserRoleRequest request) {
+  public Page<UserRoleResponse> getAll(User checkUser, PagingUserRoleRequest request) {
     validatorService.validate(request);
 
     userRoleUtils.checkAdminRole(checkUser);

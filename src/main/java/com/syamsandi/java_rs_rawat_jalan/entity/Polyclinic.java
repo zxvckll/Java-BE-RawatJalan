@@ -1,9 +1,6 @@
 package com.syamsandi.java_rs_rawat_jalan.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,6 +22,6 @@ public class Polyclinic {
 
   private String name;
 
-  @OneToMany(mappedBy = "polyclinic")
+  @OneToMany(mappedBy = "polyclinic", cascade = CascadeType.ALL)
   private List<Clinic> clinics;
 }

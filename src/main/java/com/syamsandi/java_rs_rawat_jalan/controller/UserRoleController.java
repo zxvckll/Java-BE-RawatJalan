@@ -2,7 +2,6 @@ package com.syamsandi.java_rs_rawat_jalan.controller;
 
 import com.syamsandi.java_rs_rawat_jalan.entity.User;
 import com.syamsandi.java_rs_rawat_jalan.model.*;
-import com.syamsandi.java_rs_rawat_jalan.service.RoleService;
 import com.syamsandi.java_rs_rawat_jalan.service.UserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -48,7 +47,7 @@ public class UserRoleController {
     UUID roleUuid = roleId != null ? UUID.fromString(roleId) : null;
     UUID userUuid = userId != null ? UUID.fromString(userId) : null;
 
-    SearchUserRoleRequest request = new SearchUserRoleRequest();
+    PagingUserRoleRequest request = new PagingUserRoleRequest();
     request.setUserId(userUuid);
     request.setRoleId(roleUuid);
     request.setPage(page);

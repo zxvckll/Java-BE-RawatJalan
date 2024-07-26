@@ -23,7 +23,7 @@ public class RoleController {
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
   public WebResponse<RoleResponse> create(User user, @RequestBody RoleRequest request) {
-    RoleResponse response = roleService.create(user,request);
+    RoleResponse response = roleService.create(user, request);
     return WebResponse.<RoleResponse>builder()
         .data(response)
         .build();
@@ -31,9 +31,8 @@ public class RoleController {
 
   @GetMapping(path = "/api/roles/{roleId}",
       produces = MediaType.APPLICATION_JSON_VALUE)
-  public WebResponse<RoleResponse> get(User user,@PathVariable("roleId") String roleId) {
-    UUID roleUuid = UUID.fromString(roleId);
-    RoleResponse response = roleService.get(user,roleUuid);
+  public WebResponse<RoleResponse> get(User user, @PathVariable("roleId") UUID roleId) {
+    RoleResponse response = roleService.get(user, roleId);
     return WebResponse.<RoleResponse>builder()
         .data(response)
         .build();
@@ -51,19 +50,17 @@ public class RoleController {
   @PutMapping(path = "/api/roles/{roleId}",
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
-  public WebResponse<RoleResponse> update(User user,@RequestBody RoleRequest request, @PathVariable("roleId") String roleId) {
-    UUID roleUuid = UUID.fromString(roleId);
-    RoleResponse response = roleService.update(user,request, roleUuid);
+  public WebResponse<RoleResponse> update(User user, @RequestBody RoleRequest request, @PathVariable("roleId") UUID roleId) {
+    RoleResponse response = roleService.update(user, request, roleId);
     return WebResponse.<RoleResponse>builder()
         .data(response)
         .build();
   }
 
-  @DeleteMapping(path ="/api/roles/{roleId}",
-  produces = MediaType.APPLICATION_JSON_VALUE)
-  public WebResponse<String> delete(User user,@PathVariable("roleId") String roleId){
-    UUID roleUuid = UUID.fromString(roleId);
-    roleService.delete(user,roleUuid);
+  @DeleteMapping(path = "/api/roles/{roleId}",
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public WebResponse<String> delete(User user, @PathVariable("roleId") UUID roleId) {
+    roleService.delete(user, roleId);
     return WebResponse.<String>builder()
         .data("OK")
         .build();

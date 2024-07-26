@@ -26,15 +26,15 @@ public class ClinicController {
     return WebResponse.<ClinicResponse>builder().data(response).build();
   }
 
-  @GetMapping(path = "/{polyclinicId}/clinics/{clinicId}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public WebResponse<ClinicResponse> get(User user, @PathVariable("polyclinicId") UUID polyclinicId, @PathVariable("clinicId") UUID clinicId) {
-    ClinicResponse response = clinicService.get(user, polyclinicId, clinicId);
+  @GetMapping(path = "/{polyclinicSlug}/clinics/{clinicSlug}", produces = MediaType.APPLICATION_JSON_VALUE)
+  public WebResponse<ClinicResponse> get(User user, @PathVariable("polyclinicSlug") String polyclinicSlug, @PathVariable("clinicSlug") String clinicSlug) {
+    ClinicResponse response = clinicService.get(user, polyclinicSlug, clinicSlug);
     return WebResponse.<ClinicResponse>builder().data(response).build();
   }
 
-  @GetMapping(path = "/{polyclinicId}/clinics", produces = MediaType.APPLICATION_JSON_VALUE)
-  public WebResponse<List<ClinicResponse>> getAll(User user, @PathVariable("polyclinicId") UUID polyclinicId) {
-    List<ClinicResponse> responses = clinicService.getAll(user, polyclinicId);
+  @GetMapping(path = "/{polyclinicSlug}/clinics", produces = MediaType.APPLICATION_JSON_VALUE)
+  public WebResponse<List<ClinicResponse>> getAll(User user, @PathVariable("polyclinicSlug") String polyclinicSlug) {
+    List<ClinicResponse> responses = clinicService.getAll(user, polyclinicSlug);
     return WebResponse.<List<ClinicResponse>>builder().data(responses).build();
   }
 

@@ -15,6 +15,8 @@ public interface ClinicRepository extends JpaRepository<Clinic, UUID> {
 
   Optional<Clinic> findFirstByName(String name);
 
+  Optional<Clinic> findFirstBySlug(String slug);
+
   List<Clinic> findAllByPolyclinic(Polyclinic polyclinic);
 
   Boolean existsByName(String name);

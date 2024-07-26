@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class CinicControllerTest {
+class ClinicControllerTest {
 
   @Autowired
   private MockMvc mockMvc;
@@ -81,11 +81,13 @@ class CinicControllerTest {
     Polyclinic polyclinic = new Polyclinic();
     polyclinic.setId(POLYCLINIC_ID);
     polyclinic.setName("polyclinic 1");
+    polyclinic.setSlug("polyclinic-1");
     polyclinicRepository.save(polyclinic);
 
     Clinic clinic = new Clinic();
     clinic.setId(CLINIC_ID);
     clinic.setPolyclinic(polyclinic);
+    clinic.setSlug("clinic-1");
     clinic.setName("clinic 1");
     clinicRepository.save(clinic);
   }
@@ -134,7 +136,7 @@ class CinicControllerTest {
   @Test
   void getSuccess() throws Exception{
     mockMvc.perform(
-        get("/api/polyclinics/{polyclinicId}/clinics/{clinicId}",POLYCLINIC_ID.toString(), CLINIC_ID.toString())
+        get("/api/polyclinics/polyclinic-1/clinics/clinic-1")
             .header("X-API-TOKEN","test")
     ).andExpectAll(
         status().isOk()
@@ -149,7 +151,7 @@ class CinicControllerTest {
   @Test
   void getFailedToken() throws Exception{
     mockMvc.perform(
-        get("/api/polyclinics/{polyclinicId}/clinics/{clinicId}",POLYCLINIC_ID.toString(), CLINIC_ID.toString())
+        get("/api/polyclinics/polyclinic-1/clinics/clinic-1")
     ).andExpectAll(
         status().isUnauthorized()
     ).andDo(result -> {
@@ -166,11 +168,12 @@ class CinicControllerTest {
     clinic.setId(UUID.randomUUID());
     clinic.setPolyclinic(polyclinic);
     clinic.setName("clinic 2");
+    clinic.setSlug("clinic-2");
     clinicRepository.save(clinic);
 
 
     mockMvc.perform(
-        get("/api/polyclinics/{polyclinicId}/clinics",POLYCLINIC_ID.toString())
+        get("/api/polyclinics/polyclinic-1/clinics")
             .header("X-API-TOKEN","test")
     ).andExpectAll(
         status().isOk()
@@ -189,9 +192,10 @@ class CinicControllerTest {
     clinic.setId(UUID.randomUUID());
     clinic.setPolyclinic(polyclinic);
     clinic.setName("clinic 2");
+    clinic.setSlug("clinic-2");
     clinicRepository.save(clinic);
     mockMvc.perform(
-        get("/api/polyclinics/{polyclinicId}/clinics",POLYCLINIC_ID.toString())
+        get("/api/polyclinics/polyclinic-1/clinics")
     ).andExpectAll(
         status().isUnauthorized()
     ).andDo(result -> {

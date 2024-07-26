@@ -22,6 +22,8 @@ public class Polyclinic {
 
   private String name;
 
+  private String slug;
+
   @OneToMany(mappedBy = "polyclinic", cascade = CascadeType.ALL)
   private List<Clinic> clinics;
 }

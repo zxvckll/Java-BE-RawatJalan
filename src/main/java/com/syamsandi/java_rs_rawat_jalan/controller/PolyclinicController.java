@@ -27,10 +27,10 @@ public class PolyclinicController {
         .build();
   }
 
-  @GetMapping(path = "/api/polyclinics/{polyclinicId}",
+  @GetMapping(path = "/api/polyclinics/{slug}",
       produces = MediaType.APPLICATION_JSON_VALUE)
-  public WebResponse<PolyclinicResponse> get(User user, @PathVariable("polyclinicId") UUID polyclinicId) {
-    PolyclinicResponse response = polyclinicService.get(user, polyclinicId);
+  public WebResponse<PolyclinicResponse> get(User user, @PathVariable("slug") String slug) {
+    PolyclinicResponse response = polyclinicService.get(user, slug);
     return WebResponse.<PolyclinicResponse>builder()
         .data(response)
         .build();

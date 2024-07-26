@@ -29,6 +29,9 @@ public class PolyclinicServiceImpl implements PolyclinicService {
   @Autowired
   private UserRoleUtils userRoleUtils;
 
+  @Autowired
+  private SlugUtils slugUtils;
+
 
   @Transactional
   @Override
@@ -36,9 +39,11 @@ public class PolyclinicServiceImpl implements PolyclinicService {
     validatorService.validate(request);
     userRoleUtils.checkAdminRole(user);
 
+    String slug = slugUtils.toSlug(request.getName());
     Polyclinic polyclinic = new Polyclinic();
     polyclinic.setId(UUID.randomUUID());
     polyclinic.setName(request.getName());
+    polyclinic.setSlug(slug);
     polyclinicRepository.save(polyclinic);
 
     return toPolyclinicResponse(polyclinic);
@@ -46,10 +51,10 @@ public class PolyclinicServiceImpl implements PolyclinicService {
 
   @Transactional(readOnly = true)
   @Override
-  public PolyclinicResponse get(User user,UUID id) {
+  public PolyclinicResponse get(User user,String slug) {
     userRoleUtils.checkAdminRole(user);
 
-    Polyclinic polyclinic = polyclinicRepository.findFirstById(id).orElseThrow(
+    Polyclinic polyclinic = polyclinicRepository.findFirstBySlug(slug).orElseThrow(
         () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Role not found")
     );
 

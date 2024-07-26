@@ -14,7 +14,7 @@ public interface PolyclinicService {
 
   PolyclinicResponse create(User user, PolyclinicRequest request);
 
-  PolyclinicResponse get(User user, UUID id);
+  PolyclinicResponse get(User user, String slug);
 
   List<PolyclinicResponse> getAll(User user);
 

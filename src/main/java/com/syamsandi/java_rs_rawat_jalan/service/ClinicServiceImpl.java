@@ -32,6 +32,9 @@ public class ClinicServiceImpl implements ClinicService {
   @Autowired
   private UserRoleUtils userRoleUtils;
 
+  @Autowired
+  private SlugUtils slugUtils;
+
   @Transactional
   @Override
   public ClinicResponse create(User user, ClinicRequest request) {
@@ -41,25 +44,26 @@ public class ClinicServiceImpl implements ClinicService {
     Polyclinic polyclinic = polyclinicRepository.findById(request.getPolyclinicId())
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Polyclinic not found"));
 
+    String slug = slugUtils.toSlug(request.getName());
+
     Clinic clinic = new Clinic();
     clinic.setId(UUID.randomUUID());
     clinic.setPolyclinic(polyclinic);
     clinic.setName(request.getName());
-
+    clinic.setSlug(slug);
     clinicRepository.save(clinic);
-
     return toClinicResponse(clinic);
   }
 
   @Transactional(readOnly = true)
   @Override
-  public ClinicResponse get(User user, UUID polyclinicId, UUID clinicId) {
+  public ClinicResponse get(User user, String polyclinicSlug, String clinicSlug) {
     userRoleUtils.checkAdminRole(user);
 
-    Clinic clinic = clinicRepository.findById(clinicId)
+    Clinic clinic = clinicRepository.findFirstBySlug(clinicSlug)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Clinic not found"));
 
-    if (!clinic.getPolyclinic().getId().equals(polyclinicId)) {
+    if (!clinic.getPolyclinic().getSlug().equals(polyclinicSlug)) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Clinic is not related to the specified polyclinic");
     }
 
@@ -68,12 +72,12 @@ public class ClinicServiceImpl implements ClinicService {
 
   @Transactional(readOnly = true)
   @Override
-  public List<ClinicResponse> getAll(User user, UUID polyclinicId) {
+  public List<ClinicResponse> getAll(User user, String polyclinicSlug) {
     userRoleUtils.checkAdminRole(user);
 
     List<Clinic> clinics;
-    if (polyclinicId != null) {
-      Polyclinic polyclinic = polyclinicRepository.findById(polyclinicId)
+    if (polyclinicSlug != null) {
+      Polyclinic polyclinic = polyclinicRepository.findFirstBySlug(polyclinicSlug)
           .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Polyclinic not found"));
       clinics = clinicRepository.findAllByPolyclinic(polyclinic);
     } else {

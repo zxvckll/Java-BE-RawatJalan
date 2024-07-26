@@ -6,10 +6,8 @@ import com.syamsandi.java_rs_rawat_jalan.entity.Polyclinic;
 import com.syamsandi.java_rs_rawat_jalan.entity.Role;
 import com.syamsandi.java_rs_rawat_jalan.entity.User;
 import com.syamsandi.java_rs_rawat_jalan.entity.UserRole;
+import com.syamsandi.java_rs_rawat_jalan.model.*;
 import com.syamsandi.java_rs_rawat_jalan.model.PolyclinicRequest;
-import com.syamsandi.java_rs_rawat_jalan.model.PolyclinicRequest;
-import com.syamsandi.java_rs_rawat_jalan.model.RoleResponse;
-import com.syamsandi.java_rs_rawat_jalan.model.WebResponse;
 import com.syamsandi.java_rs_rawat_jalan.repository.PolyclinicRepository;
 import com.syamsandi.java_rs_rawat_jalan.repository.RoleRepository;
 import com.syamsandi.java_rs_rawat_jalan.repository.UserRepository;
@@ -86,7 +84,13 @@ class PolyclinicControllerTest {
     Polyclinic polyclinic = new Polyclinic();
     polyclinic.setId(POLYCLINIC_ID);
     polyclinic.setName("Gigi");
+    polyclinic.setSlug("Gigi");
     polyclinicRepository.save(polyclinic);
+  }
+
+  @Test
+  void name() {
+    polyclinicRepository.deleteAll();
   }
 
   @Test
@@ -103,7 +107,7 @@ class PolyclinicControllerTest {
     ).andExpectAll(
         status().isOk()
     ).andDo(result -> {
-      WebResponse<RoleResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+      WebResponse<PolyclinicResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
       });
       assertNull(response.getErrors());
       assertNotNull(response.getData().getId());
@@ -124,7 +128,7 @@ class PolyclinicControllerTest {
     ).andExpectAll(
         status().isUnauthorized()
     ).andDo(result -> {
-      WebResponse<RoleResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+      WebResponse<PolyclinicResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
       });
       assertNotNull(response.getErrors());
     });
@@ -133,12 +137,12 @@ class PolyclinicControllerTest {
   @Test
   void getSuccess() throws Exception{
     mockMvc.perform(
-        get("/api/polyclinics/{polyclinicId}",POLYCLINIC_ID.toString())
+        get("/api/polyclinics/Gigi")
             .header("X-API-TOKEN","test")
     ).andExpectAll(
         status().isOk()
     ).andDo(result -> {
-      WebResponse<RoleResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+      WebResponse<PolyclinicResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
       });
       assertNull(response.getErrors());
       assertNotNull(response.getData().getId());
@@ -148,11 +152,11 @@ class PolyclinicControllerTest {
   @Test
   void getFailedToken() throws Exception{
     mockMvc.perform(
-        get("/api/polyclinics/{polyclinicId}",POLYCLINIC_ID.toString())
+        get("/api/polyclinics/Gigi")
     ).andExpectAll(
         status().isUnauthorized()
     ).andDo(result -> {
-      WebResponse<RoleResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+      WebResponse<PolyclinicResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
       });
       assertNotNull(response.getErrors());
     });
@@ -164,6 +168,7 @@ class PolyclinicControllerTest {
       Polyclinic polyclinic = new Polyclinic();
       polyclinic.setId(UUID.randomUUID());
       polyclinic.setName("polyclinic ke-" + i);
+      polyclinic.setSlug("polyclinic-ke-"+i);
       polyclinicRepository.save(polyclinic);
     }
 
@@ -173,7 +178,7 @@ class PolyclinicControllerTest {
     ).andExpectAll(
         status().isOk()
     ).andDo(result -> {
-      WebResponse<List<RoleResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+      WebResponse<List<PolyclinicResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
       });
       assertNull(response.getErrors());
       assertEquals(response.getData().size(),11);
@@ -186,6 +191,7 @@ class PolyclinicControllerTest {
       Polyclinic polyclinic = new Polyclinic();
       polyclinic.setId(UUID.randomUUID());
       polyclinic.setName("role ke-" + i);
+      polyclinic.setSlug("polyclinic-ke-"+i);
       polyclinicRepository.save(polyclinic);
     }
 
@@ -194,7 +200,7 @@ class PolyclinicControllerTest {
     ).andExpectAll(
         status().isUnauthorized()
     ).andDo(result -> {
-      WebResponse<List<RoleResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+      WebResponse<List<PolyclinicResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
       });
       assertNotNull(response.getErrors());
     });
@@ -214,7 +220,7 @@ class PolyclinicControllerTest {
     ).andExpectAll(
         status().isOk()
     ).andDo(result -> {
-      WebResponse<RoleResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+      WebResponse<PolyclinicResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
       });
       assertNull(response.getErrors());
       assertNotNull(response.getData().getId());
@@ -236,7 +242,7 @@ class PolyclinicControllerTest {
     ).andExpectAll(
         status().isUnauthorized()
     ).andDo(result -> {
-      WebResponse<RoleResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+      WebResponse<PolyclinicResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
       });
       assertNotNull(response.getErrors());
     });

@@ -14,9 +14,9 @@ public interface ClinicService {
 
   ClinicResponse create(User user, ClinicRequest request);
 
-  ClinicResponse get(User user,UUID polyclinicId,UUID id);
+  ClinicResponse get(User user,String polyclinicSlug,String clinicSlug);
 
-  List<ClinicResponse> getAll(User user,UUID polyclinicId);
+  List<ClinicResponse> getAll(User user,String polyclinicSlug);
 
   ClinicResponse update(User user,ClinicRequest request,UUID id);
 

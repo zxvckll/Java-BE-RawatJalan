@@ -10,13 +10,14 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/api/users/current")
 public class UserProfileController {
 
   @Autowired
   private UserProfileService userProfileService;
 
 
-  @PostMapping(path = "/api/users/current/profile")
+  @PostMapping(path = "/profile")
   public WebResponse<String> create(@RequestBody UserProfileRequest request, User user) {
     userProfileService.create(request, user);
     return WebResponse.<String>builder()
@@ -24,7 +25,7 @@ public class UserProfileController {
         .build();
   }
 
-  @GetMapping(path = "/api/users/current/profile")
+  @GetMapping(path = "/profile")
   public WebResponse<UserProfileResponse> get(User user) {
     UserProfileResponse response = userProfileService.get(user);
     return WebResponse.<UserProfileResponse>builder()
@@ -32,7 +33,7 @@ public class UserProfileController {
         .build();
   }
 
-  @PutMapping(path = "/api/users/current/profile",
+  @PutMapping(path = "/profile",
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
   public WebResponse<UserProfileResponse> update(@RequestBody UserProfileRequest request, User user) {

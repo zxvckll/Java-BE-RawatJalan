@@ -29,9 +29,8 @@ public class PolyclinicController {
 
   @GetMapping(path = "/api/polyclinics/{polyclinicId}",
       produces = MediaType.APPLICATION_JSON_VALUE)
-  public WebResponse<PolyclinicResponse> get(User user, @PathVariable("polyclinicId") String polyclinicId) {
-    UUID roleUuid = UUID.fromString(polyclinicId);
-    PolyclinicResponse response = polyclinicService.get(user, roleUuid);
+  public WebResponse<PolyclinicResponse> get(User user, @PathVariable("polyclinicId") UUID polyclinicId) {
+    PolyclinicResponse response = polyclinicService.get(user, polyclinicId);
     return WebResponse.<PolyclinicResponse>builder()
         .data(response)
         .build();
@@ -51,9 +50,8 @@ public class PolyclinicController {
       produces = MediaType.APPLICATION_JSON_VALUE)
   public WebResponse<PolyclinicResponse> update(User user,
                                                 @RequestBody PolyclinicRequest request,
-                                                @PathVariable("polyclinicId") String polyclinicId) {
-    UUID roleUuid = UUID.fromString(polyclinicId);
-    PolyclinicResponse response = polyclinicService.update(user, request, roleUuid);
+                                                @PathVariable("polyclinicId") UUID polyclinicId) {
+    PolyclinicResponse response = polyclinicService.update(user, request, polyclinicId);
     return WebResponse.<PolyclinicResponse>builder()
         .data(response)
         .build();
@@ -61,9 +59,8 @@ public class PolyclinicController {
 
   @DeleteMapping(path = "/api/polyclinics/{polyclinicId}",
       produces = MediaType.APPLICATION_JSON_VALUE)
-  public WebResponse<String> delete(User user, @PathVariable("polyclinicId") String polyclinicId) {
-    UUID roleUuid = UUID.fromString(polyclinicId);
-    polyclinicService.delete(user, roleUuid);
+  public WebResponse<String> delete(User user, @PathVariable("polyclinicId") UUID polyclinicId) {
+    polyclinicService.delete(user, polyclinicId);
     return WebResponse.<String>builder()
         .data("OK")
         .build();

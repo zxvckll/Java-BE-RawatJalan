@@ -1,9 +1,8 @@
 package com.syamsandi.java_rs_rawat_jalan.controller;
 
 import com.syamsandi.java_rs_rawat_jalan.entity.User;
-import com.syamsandi.java_rs_rawat_jalan.model.RoleRequest;
-import com.syamsandi.java_rs_rawat_jalan.model.RoleResponse;
-import com.syamsandi.java_rs_rawat_jalan.model.UserResponse;
+import com.syamsandi.java_rs_rawat_jalan.model.role.CreateRoleRequest;
+import com.syamsandi.java_rs_rawat_jalan.model.role.RoleResponse;
 import com.syamsandi.java_rs_rawat_jalan.model.WebResponse;
 import com.syamsandi.java_rs_rawat_jalan.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +21,7 @@ public class RoleController {
   @PostMapping(path = "/api/roles",
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
-  public WebResponse<RoleResponse> create(User user, @RequestBody RoleRequest request) {
+  public WebResponse<RoleResponse> create(User user, @RequestBody CreateRoleRequest request) {
     RoleResponse response = roleService.create(user, request);
     return WebResponse.<RoleResponse>builder()
         .data(response)
@@ -50,7 +49,7 @@ public class RoleController {
   @PutMapping(path = "/api/roles/{roleId}",
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
-  public WebResponse<RoleResponse> update(User user, @RequestBody RoleRequest request, @PathVariable("roleId") UUID roleId) {
+  public WebResponse<RoleResponse> update(User user, @RequestBody CreateRoleRequest request, @PathVariable("roleId") UUID roleId) {
     RoleResponse response = roleService.update(user, request, roleId);
     return WebResponse.<RoleResponse>builder()
         .data(response)

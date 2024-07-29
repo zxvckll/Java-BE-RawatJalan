@@ -2,8 +2,8 @@ package com.syamsandi.java_rs_rawat_jalan.service;
 
 import com.syamsandi.java_rs_rawat_jalan.entity.User;
 import com.syamsandi.java_rs_rawat_jalan.entity.UserProfile;
-import com.syamsandi.java_rs_rawat_jalan.model.UserProfileRequest;
-import com.syamsandi.java_rs_rawat_jalan.model.UserProfileResponse;
+import com.syamsandi.java_rs_rawat_jalan.model.user_profile.UserProfileRequest;
+import com.syamsandi.java_rs_rawat_jalan.model.user_profile.UserProfileResponse;
 import com.syamsandi.java_rs_rawat_jalan.repository.UserProfileRepository;
 import com.syamsandi.java_rs_rawat_jalan.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,7 +90,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     String dateOfBirthString = userProfile.getDateOfBirth().format(DATE_FORMATTER);
 
     return UserProfileResponse.builder()
-        .id(userProfile.getId())
+        .userProfileId(userProfile.getId())
         .name(userProfile.getName())
         .address(userProfile.getAddress())
         .imageUrl(userProfile.getImageUrl())

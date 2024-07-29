@@ -2,23 +2,17 @@ package com.syamsandi.java_rs_rawat_jalan.service;
 
 import com.syamsandi.java_rs_rawat_jalan.entity.Role;
 import com.syamsandi.java_rs_rawat_jalan.entity.User;
-import com.syamsandi.java_rs_rawat_jalan.entity.UserRole;
-import com.syamsandi.java_rs_rawat_jalan.model.RoleRequest;
-import com.syamsandi.java_rs_rawat_jalan.model.RoleResponse;
+import com.syamsandi.java_rs_rawat_jalan.model.role.CreateRoleRequest;
+import com.syamsandi.java_rs_rawat_jalan.model.role.RoleResponse;
 import com.syamsandi.java_rs_rawat_jalan.repository.RoleRepository;
-import com.syamsandi.java_rs_rawat_jalan.repository.UserProfileRepository;
-import com.syamsandi.java_rs_rawat_jalan.repository.UserRepository;
 import com.syamsandi.java_rs_rawat_jalan.repository.UserRoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -38,7 +32,7 @@ public class RoleServiceImpl implements RoleService {
 
   @Transactional
   @Override
-  public RoleResponse create(User user,RoleRequest request) {
+  public RoleResponse create(User user, CreateRoleRequest request) {
     validatorService.validate(request);
     userRoleUtils.checkAdminRole(user);
 
@@ -73,7 +67,7 @@ public class RoleServiceImpl implements RoleService {
 
   @Transactional
   @Override
-  public RoleResponse update(User user,RoleRequest request, UUID id) {
+  public RoleResponse update(User user, CreateRoleRequest request, UUID id) {
     validatorService.validate(request);
     userRoleUtils.checkAdminRole(user);
 
@@ -99,7 +93,7 @@ public class RoleServiceImpl implements RoleService {
 
   private RoleResponse toRoleResponse(Role role) {
     return RoleResponse.builder()
-        .id(role.getId())
+        .roleId(role.getId())
         .name(role.getName())
         .build();
   }

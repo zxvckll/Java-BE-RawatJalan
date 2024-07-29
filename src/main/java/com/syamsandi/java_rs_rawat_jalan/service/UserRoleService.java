@@ -3,8 +3,8 @@ package com.syamsandi.java_rs_rawat_jalan.service;
 
 import com.syamsandi.java_rs_rawat_jalan.entity.User;
 import com.syamsandi.java_rs_rawat_jalan.model.PagingUserRoleRequest;
-import com.syamsandi.java_rs_rawat_jalan.model.UserRoleRequest;
-import com.syamsandi.java_rs_rawat_jalan.model.UserRoleResponse;
+import com.syamsandi.java_rs_rawat_jalan.model.user_role.UserRoleRequest;
+import com.syamsandi.java_rs_rawat_jalan.model.user_role.UserRoleResponse;
 import org.springframework.data.domain.Page;
 
 import java.util.UUID;

@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.syamsandi.java_rs_rawat_jalan.entity.User;
 import com.syamsandi.java_rs_rawat_jalan.entity.UserProfile;
 import com.syamsandi.java_rs_rawat_jalan.model.*;
+import com.syamsandi.java_rs_rawat_jalan.model.user_profile.UserProfileRequest;
+import com.syamsandi.java_rs_rawat_jalan.model.user_profile.UserProfileResponse;
 import com.syamsandi.java_rs_rawat_jalan.repository.UserProfileRepository;
 import com.syamsandi.java_rs_rawat_jalan.repository.UserRepository;
 import com.syamsandi.java_rs_rawat_jalan.security.BCrypt;
@@ -123,7 +125,7 @@ class UserProfileControllerTest {
       WebResponse<UserProfileResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
       });
       assertNull(response.getErrors());
-      assertNotNull(response.getData().getId());
+      assertNotNull(response.getData().getUserProfileId());
       assertEquals(response.getData().getName(),userProfile.getName());
       assertEquals(response.getData().getAddress(),userProfile.getAddress());
       assertEquals(response.getData().getDateOfBirth(),"01-01-2001");
@@ -168,7 +170,7 @@ class UserProfileControllerTest {
       assertEquals(request.getAddress(),response.getData().getAddress());
       assertEquals(request.getDateOfBirth(),response.getData().getDateOfBirth());
       assertEquals(request.getImageUrl(),response.getData().getImageUrl());
-      assertNotNull(response.getData().getId());
+      assertNotNull(response.getData().getUserProfileId());
     });
 
   }

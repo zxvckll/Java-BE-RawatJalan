@@ -2,6 +2,8 @@ package com.syamsandi.java_rs_rawat_jalan.controller;
 
 import com.syamsandi.java_rs_rawat_jalan.entity.User;
 import com.syamsandi.java_rs_rawat_jalan.model.*;
+import com.syamsandi.java_rs_rawat_jalan.model.user_role.UserRoleRequest;
+import com.syamsandi.java_rs_rawat_jalan.model.user_role.UserRoleResponse;
 import com.syamsandi.java_rs_rawat_jalan.service.UserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

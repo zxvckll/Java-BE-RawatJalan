@@ -1,4 +1,4 @@
-package com.syamsandi.java_rs_rawat_jalan.model;
+package com.syamsandi.java_rs_rawat_jalan.model.user_role;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,9 +11,12 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class RoleResponse {
+public class UserRoleResponse {
 
-  private UUID id;
+  private UUID userRoleId;
 
-  private String name;
+  private UUID userId;
+
+  private UUID roleId;
+
 }

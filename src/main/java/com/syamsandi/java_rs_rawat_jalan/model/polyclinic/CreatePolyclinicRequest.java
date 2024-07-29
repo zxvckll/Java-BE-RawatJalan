@@ -1,4 +1,4 @@
-package com.syamsandi.java_rs_rawat_jalan.model;
+package com.syamsandi.java_rs_rawat_jalan.model.polyclinic;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -11,9 +11,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PolyclinicRequest {
+public class CreatePolyclinicRequest {
 
   @NotBlank
   @Size(max = 100)
   private String name;
+
 }

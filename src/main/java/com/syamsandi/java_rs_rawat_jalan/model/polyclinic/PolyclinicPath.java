@@ -1,5 +1,6 @@
-package com.syamsandi.java_rs_rawat_jalan.model;
+package com.syamsandi.java_rs_rawat_jalan.model.polyclinic;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -13,11 +14,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserRoleRequest {
+public class PolyclinicPath {
 
-  @NotNull
-  private UUID user_id;
+  private UUID polyclinicId;
 
-  @NotNull
-  private UUID role_id;
+  private String polyclinicSlug;
 }

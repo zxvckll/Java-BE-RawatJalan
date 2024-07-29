@@ -1,4 +1,4 @@
-package com.syamsandi.java_rs_rawat_jalan.model;
+package com.syamsandi.java_rs_rawat_jalan.model.user_profile;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,11 +11,15 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ClinicResponse {
+public class UserProfileResponse {
 
-  private UUID id;
-
-  private UUID polyclinicId;
+  private UUID userProfileId;
 
   private String name;
+
+  private String imageUrl;
+
+  private String dateOfBirth;
+
+  private String address;
 }

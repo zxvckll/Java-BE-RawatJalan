@@ -1,5 +1,4 @@
-package com.syamsandi.java_rs_rawat_jalan.model;
-
+package com.syamsandi.java_rs_rawat_jalan.model.polyclinic;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,12 +11,12 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserResponse {
-
-  private UUID id;
+public class PolyclinicResponse {
 
   private String name;
 
-  private String email;
+  private UUID polyclinicId;
+
+  private String polyclinicSlug;
 
 }

@@ -3,8 +3,10 @@ package com.syamsandi.java_rs_rawat_jalan.service;
 import com.syamsandi.java_rs_rawat_jalan.entity.Clinic;
 import com.syamsandi.java_rs_rawat_jalan.entity.Polyclinic;
 import com.syamsandi.java_rs_rawat_jalan.entity.User;
-import com.syamsandi.java_rs_rawat_jalan.model.ClinicRequest;
-import com.syamsandi.java_rs_rawat_jalan.model.ClinicResponse;
+import com.syamsandi.java_rs_rawat_jalan.model.clinic.ClinicPath;
+import com.syamsandi.java_rs_rawat_jalan.model.clinic.CreateClinicRequest;
+import com.syamsandi.java_rs_rawat_jalan.model.clinic.ClinicResponse;
+import com.syamsandi.java_rs_rawat_jalan.model.clinic.UpdateClinicRequest;
 import com.syamsandi.java_rs_rawat_jalan.repository.ClinicRepository;
 import com.syamsandi.java_rs_rawat_jalan.repository.PolyclinicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,11 +39,11 @@ public class ClinicServiceImpl implements ClinicService {
 
   @Transactional
   @Override
-  public ClinicResponse create(User user, ClinicRequest request) {
+  public ClinicResponse create(User user, CreateClinicRequest request) {
     validatorService.validate(request);
     userRoleUtils.checkAdminRole(user);
 
-    Polyclinic polyclinic = polyclinicRepository.findById(request.getPolyclinicId())
+    Polyclinic polyclinic = polyclinicRepository.findFirstBySlugAndId(request.getPolyclinicSlug(),request.getPolyclinicId())
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Polyclinic not found"));
 
     String slug = slugUtils.toSlug(request.getName());
@@ -57,13 +59,13 @@ public class ClinicServiceImpl implements ClinicService {
 
   @Transactional(readOnly = true)
   @Override
-  public ClinicResponse get(User user, String polyclinicSlug, String clinicSlug) {
+  public ClinicResponse get(User user, ClinicPath clinicPath) {
     userRoleUtils.checkAdminRole(user);
 
-    Clinic clinic = clinicRepository.findFirstBySlug(clinicSlug)
+    Clinic clinic = clinicRepository.findFirstBySlugAndId(clinicPath.getClinicSlug(),clinicPath.getClinicId())
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Clinic not found"));
 
-    if (!clinic.getPolyclinic().getSlug().equals(polyclinicSlug)) {
+    if (!clinic.getPolyclinic().getSlug().equals(clinicPath.getPolyclinicSlug())) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Clinic is not related to the specified polyclinic");
     }
 
@@ -72,12 +74,12 @@ public class ClinicServiceImpl implements ClinicService {
 
   @Transactional(readOnly = true)
   @Override
-  public List<ClinicResponse> getAll(User user, String polyclinicSlug) {
+  public List<ClinicResponse> getAll(User user, ClinicPath clinicPath) {
     userRoleUtils.checkAdminRole(user);
 
     List<Clinic> clinics;
-    if (polyclinicSlug != null) {
-      Polyclinic polyclinic = polyclinicRepository.findFirstBySlug(polyclinicSlug)
+    if (clinicPath.getPolyclinicSlug() != null) {
+      Polyclinic polyclinic = polyclinicRepository.findFirstBySlugAndId(clinicPath.getPolyclinicSlug(),clinicPath.getPolyclinicId())
           .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Polyclinic not found"));
       clinics = clinicRepository.findAllByPolyclinic(polyclinic);
     } else {
@@ -89,14 +91,14 @@ public class ClinicServiceImpl implements ClinicService {
 
   @Transactional
   @Override
-  public ClinicResponse update(User user, ClinicRequest request, UUID clinicId) {
+  public ClinicResponse update(User user, UpdateClinicRequest request) {
     validatorService.validate(request);
     userRoleUtils.checkAdminRole(user);
 
-    Polyclinic polyclinic = polyclinicRepository.findById(request.getPolyclinicId())
+    Polyclinic polyclinic = polyclinicRepository.findFirstBySlugAndId(request.getPolyclinicSlug(),request.getPolyclinicId())
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Polyclinic not found"));
 
-    Clinic clinic = clinicRepository.findById(clinicId)
+    Clinic clinic = clinicRepository.findFirstBySlugAndId(request.getClinicSlug(),request.getClinicId())
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Clinic not found"));
 
     clinic.setName(request.getName());
@@ -109,13 +111,13 @@ public class ClinicServiceImpl implements ClinicService {
 
   @Transactional
   @Override
-  public void delete(User user, UUID polyclinicId, UUID clinicId) {
+  public void delete(User user, ClinicPath clinicPath) {
     userRoleUtils.checkAdminRole(user);
 
-    Clinic clinic = clinicRepository.findById(clinicId)
+    Clinic clinic = clinicRepository.findFirstBySlugAndId(clinicPath.getClinicSlug(),clinicPath.getClinicId())
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Clinic not found"));
 
-    if (!clinic.getPolyclinic().getId().equals(polyclinicId)) {
+    if (!clinic.getPolyclinic().getId().equals(clinicPath.getPolyclinicId())) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Clinic is not related to the specified polyclinic");
     }
 
@@ -124,8 +126,10 @@ public class ClinicServiceImpl implements ClinicService {
 
   private ClinicResponse toClinicResponse(Clinic clinic) {
     return ClinicResponse.builder()
-        .id(clinic.getId())
+        .clinicId(clinic.getId())
         .polyclinicId(clinic.getPolyclinic().getId())
+        .polyclinicSlug(clinic.getPolyclinic().getSlug())
+        .clinicSlug(clinic.getSlug())
         .name(clinic.getName())
         .build();
   }

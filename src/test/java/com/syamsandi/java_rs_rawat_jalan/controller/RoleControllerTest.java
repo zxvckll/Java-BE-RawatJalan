@@ -4,10 +4,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.syamsandi.java_rs_rawat_jalan.entity.Role;
 import com.syamsandi.java_rs_rawat_jalan.entity.User;
-import com.syamsandi.java_rs_rawat_jalan.entity.UserProfile;
 import com.syamsandi.java_rs_rawat_jalan.entity.UserRole;
-import com.syamsandi.java_rs_rawat_jalan.model.RoleRequest;
-import com.syamsandi.java_rs_rawat_jalan.model.RoleResponse;
+import com.syamsandi.java_rs_rawat_jalan.model.role.CreateRoleRequest;
+import com.syamsandi.java_rs_rawat_jalan.model.role.RoleResponse;
 import com.syamsandi.java_rs_rawat_jalan.model.WebResponse;
 import com.syamsandi.java_rs_rawat_jalan.repository.RoleRepository;
 import com.syamsandi.java_rs_rawat_jalan.repository.UserRepository;
@@ -21,7 +20,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
@@ -79,7 +77,7 @@ class RoleControllerTest {
 
   @Test
   void createSuccess() throws Exception{
-    RoleRequest request = new RoleRequest();
+    CreateRoleRequest request = new CreateRoleRequest();
     request.setName("doctor");
 
     mockMvc.perform(
@@ -94,14 +92,14 @@ class RoleControllerTest {
       WebResponse<RoleResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
       });
       assertNull(response.getErrors());
-      assertNotNull(response.getData().getId());
+      assertNotNull(response.getData().getRoleId());
       assertEquals(response.getData().getName(),request.getName());
     });
   }
 
   @Test
   void createFailedToken() throws Exception{
-    RoleRequest request = new RoleRequest();
+    CreateRoleRequest request = new CreateRoleRequest();
     request.setName("doctor");
 
     mockMvc.perform(
@@ -129,7 +127,7 @@ class RoleControllerTest {
       WebResponse<RoleResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
       });
       assertNull(response.getErrors());
-      assertNotNull(response.getData().getId());
+      assertNotNull(response.getData().getRoleId());
     });
   }
 
@@ -190,7 +188,7 @@ class RoleControllerTest {
 
   @Test
   void updateSuccess() throws Exception{
-    RoleRequest request = new RoleRequest();
+    CreateRoleRequest request = new CreateRoleRequest();
     request.setName("test");
 
     mockMvc.perform(
@@ -205,7 +203,7 @@ class RoleControllerTest {
       WebResponse<RoleResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
       });
       assertNull(response.getErrors());
-      assertNotNull(response.getData().getId());
+      assertNotNull(response.getData().getRoleId());
       assertEquals(response.getData().getName(),request.getName());
     });
 
@@ -213,7 +211,7 @@ class RoleControllerTest {
 
   @Test
   void updateFailedToken() throws Exception{
-    RoleRequest request = new RoleRequest();
+    CreateRoleRequest request = new CreateRoleRequest();
     request.setName("test");
 
     mockMvc.perform(

@@ -1,9 +1,9 @@
 package com.syamsandi.java_rs_rawat_jalan.controller;
 
 import com.syamsandi.java_rs_rawat_jalan.entity.User;
-import com.syamsandi.java_rs_rawat_jalan.model.RegisterUserRequest;
-import com.syamsandi.java_rs_rawat_jalan.model.UpdateUserRequest;
-import com.syamsandi.java_rs_rawat_jalan.model.UserResponse;
+import com.syamsandi.java_rs_rawat_jalan.model.user.RegisterUserRequest;
+import com.syamsandi.java_rs_rawat_jalan.model.user.UpdateUserRequest;
+import com.syamsandi.java_rs_rawat_jalan.model.user.UserResponse;
 import com.syamsandi.java_rs_rawat_jalan.model.WebResponse;
 import com.syamsandi.java_rs_rawat_jalan.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

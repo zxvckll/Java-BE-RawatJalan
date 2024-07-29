@@ -1,8 +1,8 @@
-package com.syamsandi.java_rs_rawat_jalan.model;
+package com.syamsandi.java_rs_rawat_jalan.model.clinic;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,14 +15,27 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UpdateUserRequest {
+public class UpdateClinicRequest {
+
+  @NotNull
+  @JsonIgnore
+  private UUID polyclinicId;
 
   @NotBlank
-  @Email
-  @Size(max = 100)
-  private String email;
+  @JsonIgnore
+  private String polyclinicSlug;
+
+  @NotNull
+  @JsonIgnore
+  private UUID clinicId;
+
+  @NotBlank
+  @JsonIgnore
+  private String clinicSlug;
+
 
   @NotBlank
   @Size(max = 100)
-  private String password;
+  private String name;
+
 }

@@ -1,9 +1,11 @@
 package com.syamsandi.java_rs_rawat_jalan.controller;
 
 import com.syamsandi.java_rs_rawat_jalan.entity.User;
-import com.syamsandi.java_rs_rawat_jalan.model.ClinicRequest;
-import com.syamsandi.java_rs_rawat_jalan.model.ClinicResponse;
+import com.syamsandi.java_rs_rawat_jalan.model.clinic.ClinicPath;
+import com.syamsandi.java_rs_rawat_jalan.model.clinic.CreateClinicRequest;
+import com.syamsandi.java_rs_rawat_jalan.model.clinic.ClinicResponse;
 import com.syamsandi.java_rs_rawat_jalan.model.WebResponse;
+import com.syamsandi.java_rs_rawat_jalan.model.clinic.UpdateClinicRequest;
 import com.syamsandi.java_rs_rawat_jalan.service.ClinicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -19,35 +21,78 @@ public class ClinicController {
   @Autowired
   private ClinicService clinicService;
 
-  @PostMapping(path = "/{polyclinicId}/clinics", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public WebResponse<ClinicResponse> create(User user, @RequestBody ClinicRequest request, @PathVariable("polyclinicId") UUID polyclinicId) {
-    request.setPolyclinicId(polyclinicId);
-    ClinicResponse response = clinicService.create(user, request);
+  @PostMapping(path = "/{polyclinicSlug}/{polyclinicId}/clinics", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  public WebResponse<ClinicResponse> create(User user,
+                                            @RequestBody CreateClinicRequest request,
+                                            @PathVariable("polyclinicId") UUID polyclinicId,
+                                            @PathVariable("polyclinicSlug") String polyclinicSlug) {
+                                            {
+      request.setPolyclinicId(polyclinicId);
+      request.setPolyclinicSlug(polyclinicSlug);
+
+      ClinicResponse response = clinicService.create(user, request);
+      return WebResponse.<ClinicResponse>builder().data(response).build();
+    }
+  }
+
+  @GetMapping(path = "/{polyclinicSlug}/{polyclinicId}/clinics/{clinicSlug}/{clinicId}", produces = MediaType.APPLICATION_JSON_VALUE)
+  public WebResponse<ClinicResponse> get(User user,
+                                         @PathVariable("polyclinicId") UUID polyclinicId,
+                                         @PathVariable("polyclinicSlug") String polyclinicSlug,
+                                         @PathVariable("clinicId") UUID clinicId,
+                                         @PathVariable("clinicSlug") String clinicSlug) {
+    ClinicPath clinicPath = new ClinicPath();
+    clinicPath.setClinicSlug(clinicSlug);
+    clinicPath.setClinicId(clinicId);
+    clinicPath.setPolyclinicSlug(polyclinicSlug);
+    clinicPath.setPolyclinicId(polyclinicId);
+
+    ClinicResponse response = clinicService.get(user, clinicPath);
     return WebResponse.<ClinicResponse>builder().data(response).build();
   }
 
-  @GetMapping(path = "/{polyclinicSlug}/clinics/{clinicSlug}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public WebResponse<ClinicResponse> get(User user, @PathVariable("polyclinicSlug") String polyclinicSlug, @PathVariable("clinicSlug") String clinicSlug) {
-    ClinicResponse response = clinicService.get(user, polyclinicSlug, clinicSlug);
-    return WebResponse.<ClinicResponse>builder().data(response).build();
-  }
+  @GetMapping(path = "/{polyclinicSlug}/{polyclinicId}/clinics", produces = MediaType.APPLICATION_JSON_VALUE)
+  public WebResponse<List<ClinicResponse>> getAll(User user,
+                                                  @PathVariable("polyclinicId") UUID polyclinicId,
+                                                  @PathVariable("polyclinicSlug") String polyclinicSlug) {
+    ClinicPath clinicPath = new ClinicPath();
+    clinicPath.setPolyclinicId(polyclinicId);
+    clinicPath.setPolyclinicSlug(polyclinicSlug);
 
-  @GetMapping(path = "/{polyclinicSlug}/clinics", produces = MediaType.APPLICATION_JSON_VALUE)
-  public WebResponse<List<ClinicResponse>> getAll(User user, @PathVariable("polyclinicSlug") String polyclinicSlug) {
-    List<ClinicResponse> responses = clinicService.getAll(user, polyclinicSlug);
+    List<ClinicResponse> responses = clinicService.getAll(user, clinicPath);
     return WebResponse.<List<ClinicResponse>>builder().data(responses).build();
   }
 
-  @PutMapping(path = "/{polyclinicId}/clinics/{clinicId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public WebResponse<ClinicResponse> update(User user, @RequestBody ClinicRequest request, @PathVariable("polyclinicId") UUID polyclinicId, @PathVariable("clinicId") UUID clinicId) {
+  @PutMapping(path = "/{polyclinicSlug}/{polyclinicId}/clinics/{clinicSlug}/{clinicId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  public WebResponse<ClinicResponse> update(User user,
+                                            @RequestBody UpdateClinicRequest request,
+                                            @PathVariable("polyclinicId") UUID polyclinicId,
+                                            @PathVariable("polyclinicSlug") String polyclinicSlug,
+                                            @PathVariable("clinicId") UUID clinicId,
+                                            @PathVariable("clinicSlug") String clinicSlug) {
     request.setPolyclinicId(polyclinicId);
-    ClinicResponse response = clinicService.update(user, request, clinicId);
+    request.setPolyclinicSlug(polyclinicSlug);
+    request.setClinicId(clinicId);
+    request.setClinicSlug(clinicSlug);
+
+    ClinicResponse response = clinicService.update(user, request);
     return WebResponse.<ClinicResponse>builder().data(response).build();
   }
 
-  @DeleteMapping(path = "/{polyclinicId}/clinics/{clinicId}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public WebResponse<String> delete(User user, @PathVariable("polyclinicId") UUID polyclinicId, @PathVariable("clinicId") UUID clinicId) {
-    clinicService.delete(user, polyclinicId, clinicId);
+  @DeleteMapping(path = "/{polyclinicSlug}/{polyclinicId}/clinics/{clinicSlug}/{clinicId}", produces = MediaType.APPLICATION_JSON_VALUE)
+  public WebResponse<String> delete(User user,
+                                    @PathVariable("polyclinicId") UUID polyclinicId,
+                                    @PathVariable("polyclinicSlug") String polyclinicSlug,
+                                    @PathVariable("clinicId") UUID clinicId,
+                                    @PathVariable("clinicSlug") String clinicSlug) {
+
+    ClinicPath clinicPath = new ClinicPath();
+    clinicPath.setPolyclinicSlug(polyclinicSlug);
+    clinicPath.setPolyclinicId(polyclinicId);
+    clinicPath.setClinicSlug(clinicSlug);
+    clinicPath.setClinicId(clinicId);
+
+    clinicService.delete(user, clinicPath);
     return WebResponse.<String>builder().data("OK").build();
   }
 }

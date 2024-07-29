@@ -22,6 +22,8 @@ public class Clinic {
 
   private String name;
 
+  private String slug;
+
   @ManyToOne
   @JoinColumn(name = "polyclinic_id")
   private Polyclinic polyclinic;

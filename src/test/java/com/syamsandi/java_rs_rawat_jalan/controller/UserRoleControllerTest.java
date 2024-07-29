@@ -6,21 +6,19 @@ import com.syamsandi.java_rs_rawat_jalan.entity.Role;
 import com.syamsandi.java_rs_rawat_jalan.entity.User;
 import com.syamsandi.java_rs_rawat_jalan.entity.UserRole;
 import com.syamsandi.java_rs_rawat_jalan.model.*;
+import com.syamsandi.java_rs_rawat_jalan.model.user_role.UserRoleRequest;
+import com.syamsandi.java_rs_rawat_jalan.model.user_role.UserRoleResponse;
 import com.syamsandi.java_rs_rawat_jalan.repository.RoleRepository;
 import com.syamsandi.java_rs_rawat_jalan.repository.UserRepository;
 import com.syamsandi.java_rs_rawat_jalan.repository.UserRoleRepository;
 import com.syamsandi.java_rs_rawat_jalan.security.BCrypt;
-import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
@@ -89,8 +87,8 @@ class UserRoleControllerTest {
     roleRepository.save(role);
 
     UserRoleRequest request = new UserRoleRequest();
-    request.setUser_id(USER_ID);
-    request.setRole_id(role.getId());
+    request.setUserId(USER_ID);
+    request.setRoleId(role.getId());
 
 
 
@@ -106,7 +104,7 @@ class UserRoleControllerTest {
       WebResponse<UserRoleResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
       });
       assertNull(response.getErrors());
-      assertNotNull(response.getData().getId());
+      assertNotNull(response.getData().getUserRoleId());
     });
   }
 
@@ -121,7 +119,7 @@ class UserRoleControllerTest {
       WebResponse<UserRoleResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
       });
       assertNull(response.getErrors());
-      assertNotNull(response.getData().getId());
+      assertNotNull(response.getData().getUserRoleId());
     });
   }
 
@@ -159,8 +157,8 @@ class UserRoleControllerTest {
   @Test
   void updateSuccess() throws Exception {
     UserRoleRequest request = new UserRoleRequest();
-    request.setUser_id(USER_ID);
-    request.setRole_id(ROLE_ID);
+    request.setUserId(USER_ID);
+    request.setRoleId(ROLE_ID);
 
     mockMvc.perform(
         put("/api/users/roles/{userRoleId}",USER_ROLE_ID)
@@ -174,7 +172,7 @@ class UserRoleControllerTest {
       WebResponse<UserRoleResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
       });
       assertNull(response.getErrors());
-      assertNotNull(response.getData().getId());
+      assertNotNull(response.getData().getUserRoleId());
     });
 
   }

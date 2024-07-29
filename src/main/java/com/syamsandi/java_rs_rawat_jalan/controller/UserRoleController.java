@@ -2,6 +2,8 @@ package com.syamsandi.java_rs_rawat_jalan.controller;
 
 import com.syamsandi.java_rs_rawat_jalan.entity.User;
 import com.syamsandi.java_rs_rawat_jalan.model.*;
+import com.syamsandi.java_rs_rawat_jalan.model.user_role.UserRoleRequest;
+import com.syamsandi.java_rs_rawat_jalan.model.user_role.UserRoleResponse;
 import com.syamsandi.java_rs_rawat_jalan.service.UserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -12,48 +14,41 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
+@RequestMapping("/api/users/roles")
 public class UserRoleController {
 
   @Autowired
   private UserRoleService userRoleService;
 
-  @PostMapping(path = "/api/users/roles",
-      consumes = MediaType.APPLICATION_JSON_VALUE,
-      produces = MediaType.APPLICATION_JSON_VALUE)
+  @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public WebResponse<UserRoleResponse> create(User user, @RequestBody UserRoleRequest request) {
-    UserRoleResponse response = userRoleService.create(user,request);
+    UserRoleResponse response = userRoleService.create(user, request);
     return WebResponse.<UserRoleResponse>builder()
         .data(response)
         .build();
   }
 
-  @GetMapping(path = "/api/users/roles/{userRoleId}",
-      produces = MediaType.APPLICATION_JSON_VALUE)
-  public WebResponse<UserRoleResponse> get(User user, @PathVariable("userRoleId") String userRoleId) {
-    UUID roleUuid = UUID.fromString(userRoleId);
-    UserRoleResponse response = userRoleService.get(user,roleUuid);
+  @GetMapping(path = "/{userRoleId}", produces = MediaType.APPLICATION_JSON_VALUE)
+  public WebResponse<UserRoleResponse> get(User user, @PathVariable UUID userRoleId) {
+    UserRoleResponse response = userRoleService.get(user, userRoleId);
     return WebResponse.<UserRoleResponse>builder()
         .data(response)
         .build();
   }
 
-  @GetMapping(path = "/api/users/roles",
-      produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public WebResponse<List<UserRoleResponse>> getAll(User user,
-                                                    @RequestParam(value = "user_id", required = false) String userId,
-                                                    @RequestParam(value = "role_id", required = false) String roleId,
-                                                    @RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
-                                                    @RequestParam(value = "size", required = false, defaultValue = "10") Integer size) {
-    UUID roleUuid = roleId != null ? UUID.fromString(roleId) : null;
-    UUID userUuid = userId != null ? UUID.fromString(userId) : null;
-
+                                                    @RequestParam(value = "user_id", required = false) UUID userId,
+                                                    @RequestParam(value = "role_id", required = false) UUID roleId,
+                                                    @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+                                                    @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
     PagingUserRoleRequest request = new PagingUserRoleRequest();
-    request.setUserId(userUuid);
-    request.setRoleId(roleUuid);
+    request.setUserId(userId);
+    request.setRoleId(roleId);
     request.setPage(page);
     request.setSize(size);
 
-    Page<UserRoleResponse> responses = userRoleService.getAll(user,request);
+    Page<UserRoleResponse> responses = userRoleService.getAll(user, request);
 
     return WebResponse.<List<UserRoleResponse>>builder()
         .data(responses.getContent())
@@ -65,25 +60,17 @@ public class UserRoleController {
         .build();
   }
 
-  @PutMapping(path = "/api/users/roles/{userRoleId}",
-      consumes = MediaType.APPLICATION_JSON_VALUE,
-      produces = MediaType.APPLICATION_JSON_VALUE)
-  public WebResponse<UserRoleResponse> update(User user,
-                                              @RequestBody UserRoleRequest request,
-                                              @PathVariable("userRoleId") String userRoleId) {
-    UUID roleUuid = UUID.fromString(userRoleId);
-    UserRoleResponse response = userRoleService.update(user,request, roleUuid);
+  @PutMapping(path = "/{userRoleId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  public WebResponse<UserRoleResponse> update(User user, @RequestBody UserRoleRequest request, @PathVariable UUID userRoleId) {
+    UserRoleResponse response = userRoleService.update(user, request, userRoleId);
     return WebResponse.<UserRoleResponse>builder()
         .data(response)
         .build();
   }
 
-  @DeleteMapping(path = "/api/users/roles/{userRoleId}",
-      produces = MediaType.APPLICATION_JSON_VALUE)
-  public WebResponse<String> delete(User user,
-                                    @PathVariable("userRoleId") String userRoleId) {
-    UUID roleUuid = UUID.fromString(userRoleId);
-    userRoleService.delete(user,roleUuid);
+  @DeleteMapping(path = "/{userRoleId}", produces = MediaType.APPLICATION_JSON_VALUE)
+  public WebResponse<String> delete(User user, @PathVariable UUID userRoleId) {
+    userRoleService.delete(user, userRoleId);
     return WebResponse.<String>builder()
         .data("OK")
         .build();

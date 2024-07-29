@@ -4,8 +4,8 @@ import com.syamsandi.java_rs_rawat_jalan.entity.Role;
 import com.syamsandi.java_rs_rawat_jalan.entity.User;
 import com.syamsandi.java_rs_rawat_jalan.entity.UserRole;
 import com.syamsandi.java_rs_rawat_jalan.model.PagingUserRoleRequest;
-import com.syamsandi.java_rs_rawat_jalan.model.UserRoleRequest;
-import com.syamsandi.java_rs_rawat_jalan.model.UserRoleResponse;
+import com.syamsandi.java_rs_rawat_jalan.model.user_role.UserRoleRequest;
+import com.syamsandi.java_rs_rawat_jalan.model.user_role.UserRoleResponse;
 import com.syamsandi.java_rs_rawat_jalan.repository.RoleRepository;
 import com.syamsandi.java_rs_rawat_jalan.repository.UserRepository;
 import com.syamsandi.java_rs_rawat_jalan.repository.UserRoleRepository;
@@ -46,11 +46,11 @@ public class UserRoleServiceImpl implements UserRoleService {
     validatorService.validate(request);
     userRoleUtils.checkAdminRole(checkUser);
 
-    User user = userRepository.findById(request.getUser_id()).orElseThrow(
+    User user = userRepository.findById(request.getUserId()).orElseThrow(
         () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found")
     );
 
-    Role role = roleRepository.findById(request.getRole_id()).orElseThrow(
+    Role role = roleRepository.findById(request.getRoleId()).orElseThrow(
         () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Role not found")
     );
 
@@ -127,11 +127,11 @@ public class UserRoleServiceImpl implements UserRoleService {
     UserRole userRole = userRoleRepository.findById(id).orElseThrow(
         () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "User Role not found")
     );
-    User user = userRepository.findById(request.getUser_id()).orElseThrow(
+    User user = userRepository.findById(request.getUserId()).orElseThrow(
         () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found")
     );
 
-    Role role = roleRepository.findById(request.getRole_id()).orElseThrow(
+    Role role = roleRepository.findById(request.getRoleId()).orElseThrow(
         () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Role not found")
     );
     userRole.setUser(user);
@@ -153,9 +153,9 @@ public class UserRoleServiceImpl implements UserRoleService {
 
   private UserRoleResponse toUserRoleResponse(UserRole userRole) {
     return UserRoleResponse.builder()
-        .id(userRole.getId())
-        .user_id(userRole.getUser().getId())
-        .role_id(userRole.getRole().getId())
+        .userRoleId(userRole.getId())
+        .userId(userRole.getUser().getId())
+        .roleId(userRole.getRole().getId())
         .build();
   }
 }

@@ -6,10 +6,9 @@ import com.syamsandi.java_rs_rawat_jalan.entity.Polyclinic;
 import com.syamsandi.java_rs_rawat_jalan.entity.Role;
 import com.syamsandi.java_rs_rawat_jalan.entity.User;
 import com.syamsandi.java_rs_rawat_jalan.entity.UserRole;
-import com.syamsandi.java_rs_rawat_jalan.model.PolyclinicRequest;
-import com.syamsandi.java_rs_rawat_jalan.model.PolyclinicRequest;
-import com.syamsandi.java_rs_rawat_jalan.model.RoleResponse;
 import com.syamsandi.java_rs_rawat_jalan.model.WebResponse;
+import com.syamsandi.java_rs_rawat_jalan.model.polyclinic.CreatePolyclinicRequest;
+import com.syamsandi.java_rs_rawat_jalan.model.polyclinic.PolyclinicResponse;
 import com.syamsandi.java_rs_rawat_jalan.repository.PolyclinicRepository;
 import com.syamsandi.java_rs_rawat_jalan.repository.RoleRepository;
 import com.syamsandi.java_rs_rawat_jalan.repository.UserRepository;
@@ -48,11 +47,14 @@ class PolyclinicControllerTest {
   private static final UUID USER_ROLE_ID = UUID.randomUUID();
 
   private static final UUID POLYCLINIC_ID = UUID.randomUUID();
+  private static final String POLYCLINIC_SLUG = "Gigi";
+
   @Autowired
   private UserRepository userRepository;
+
   @Autowired
   private UserRoleRepository userRoleRepository;
-  
+
   @Autowired
   private RoleRepository roleRepository;
 
@@ -62,7 +64,6 @@ class PolyclinicControllerTest {
     roleRepository.deleteAll();
     polyclinicRepository.deleteAll();
     userRoleRepository.deleteAll();
-
 
     User user = new User();
     user.setId(USER_ID);
@@ -86,34 +87,35 @@ class PolyclinicControllerTest {
     Polyclinic polyclinic = new Polyclinic();
     polyclinic.setId(POLYCLINIC_ID);
     polyclinic.setName("Gigi");
+    polyclinic.setSlug(POLYCLINIC_SLUG);
     polyclinicRepository.save(polyclinic);
   }
 
   @Test
-  void createSuccess() throws Exception{
-    PolyclinicRequest request = new PolyclinicRequest();
+  void createSuccess() throws Exception {
+    CreatePolyclinicRequest request = new CreatePolyclinicRequest();
     request.setName("doctor");
 
     mockMvc.perform(
         post("/api/polyclinics")
-            .header("X-API-TOKEN","test")
+            .header("X-API-TOKEN", "test")
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request))
     ).andExpectAll(
         status().isOk()
     ).andDo(result -> {
-      WebResponse<RoleResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+      WebResponse<PolyclinicResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
       });
       assertNull(response.getErrors());
-      assertNotNull(response.getData().getId());
-      assertEquals(response.getData().getName(),request.getName());
+      assertNotNull(response.getData().getPolyclinicId());
+      assertEquals(response.getData().getName(), request.getName());
     });
   }
 
   @Test
-  void createFailedToken() throws Exception{
-    PolyclinicRequest request = new PolyclinicRequest();
+  void createFailedToken() throws Exception {
+    CreatePolyclinicRequest request = new CreatePolyclinicRequest();
     request.setName("doctor");
 
     mockMvc.perform(
@@ -124,68 +126,83 @@ class PolyclinicControllerTest {
     ).andExpectAll(
         status().isUnauthorized()
     ).andDo(result -> {
-      WebResponse<RoleResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+      WebResponse<PolyclinicResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
       });
       assertNotNull(response.getErrors());
     });
   }
 
   @Test
-  void getSuccess() throws Exception{
+  void getSuccess() throws Exception {
     mockMvc.perform(
-        get("/api/polyclinics/{polyclinicId}",POLYCLINIC_ID.toString())
-            .header("X-API-TOKEN","test")
+        get("/api/polyclinics/{polyclinicSlug}/{polyclinicId}", POLYCLINIC_SLUG, POLYCLINIC_ID.toString())
+            .header("X-API-TOKEN", "test")
     ).andExpectAll(
         status().isOk()
     ).andDo(result -> {
-      WebResponse<RoleResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+      WebResponse<PolyclinicResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
       });
       assertNull(response.getErrors());
-      assertNotNull(response.getData().getId());
+      assertNotNull(response.getData().getPolyclinicId());
     });
   }
 
+
+
   @Test
-  void getFailedToken() throws Exception{
+  void testUuidParsing() {
+    String uuidString = "e1c74130-6b2c-45d3-88ff-3a9c9ebe92bc";
+    UUID uuid = UUID.fromString(uuidString);
+    assertNotNull(uuid);
+  }
+
+
+
+
+
+  @Test
+  void getFailedToken() throws Exception {
     mockMvc.perform(
-        get("/api/polyclinics/{polyclinicId}",POLYCLINIC_ID.toString())
+        get("/api/polyclinics/{polyclinicSlug}/{polyclinicId}", POLYCLINIC_SLUG, POLYCLINIC_ID.toString())
     ).andExpectAll(
         status().isUnauthorized()
     ).andDo(result -> {
-      WebResponse<RoleResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+      WebResponse<PolyclinicResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
       });
       assertNotNull(response.getErrors());
     });
   }
 
   @Test
-  void getAllSuccess() throws Exception{
+  void getAllSuccess() throws Exception {
     for (int i = 0; i < 10; i++) {
       Polyclinic polyclinic = new Polyclinic();
       polyclinic.setId(UUID.randomUUID());
       polyclinic.setName("polyclinic ke-" + i);
+      polyclinic.setSlug("polyclinic-ke-" + i);
       polyclinicRepository.save(polyclinic);
     }
 
     mockMvc.perform(
         get("/api/polyclinics")
-            .header("X-API-TOKEN","test")
+            .header("X-API-TOKEN", "test")
     ).andExpectAll(
         status().isOk()
     ).andDo(result -> {
-      WebResponse<List<RoleResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+      WebResponse<List<PolyclinicResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
       });
       assertNull(response.getErrors());
-      assertEquals(response.getData().size(),11);
+      assertEquals(response.getData().size(), 11);
     });
   }
 
   @Test
-  void getAllFailedToken() throws Exception{
+  void getAllFailedToken() throws Exception {
     for (int i = 0; i < 10; i++) {
       Polyclinic polyclinic = new Polyclinic();
       polyclinic.setId(UUID.randomUUID());
       polyclinic.setName("role ke-" + i);
+      polyclinic.setSlug("polyclinic-ke-" + i);
       polyclinicRepository.save(polyclinic);
     }
 
@@ -194,49 +211,48 @@ class PolyclinicControllerTest {
     ).andExpectAll(
         status().isUnauthorized()
     ).andDo(result -> {
-      WebResponse<List<RoleResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+      WebResponse<List<PolyclinicResponse>> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
       });
       assertNotNull(response.getErrors());
     });
   }
 
   @Test
-  void updateSuccess() throws Exception{
-    PolyclinicRequest request = new PolyclinicRequest();
+  void updateSuccess() throws Exception {
+    CreatePolyclinicRequest request = new CreatePolyclinicRequest();
     request.setName("test");
 
     mockMvc.perform(
-        put("/api/polyclinics/{polyclinicId}",POLYCLINIC_ID.toString())
-            .header("X-API-TOKEN","test")
+        put("/api/polyclinics/{polyclinicSlug}/{polyclinicId}", POLYCLINIC_SLUG, POLYCLINIC_ID.toString())
+            .header("X-API-TOKEN", "test")
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request))
     ).andExpectAll(
         status().isOk()
     ).andDo(result -> {
-      WebResponse<RoleResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+      WebResponse<PolyclinicResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
       });
       assertNull(response.getErrors());
-      assertNotNull(response.getData().getId());
-      assertEquals(response.getData().getName(),request.getName());
+      assertNotNull(response.getData().getPolyclinicId());
+      assertEquals(response.getData().getName(), request.getName());
     });
-
   }
 
   @Test
   void updateFailedToken() throws Exception{
-    PolyclinicRequest request = new PolyclinicRequest();
+    CreatePolyclinicRequest request = new CreatePolyclinicRequest();
     request.setName("test");
 
     mockMvc.perform(
-        put("/api/polyclinics/{polyclinicId}",POLYCLINIC_ID.toString())
+        put("/api/polyclinics/{polyclinicSlug}/{polyclinicId}", POLYCLINIC_SLUG, POLYCLINIC_ID.toString())
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request))
     ).andExpectAll(
         status().isUnauthorized()
     ).andDo(result -> {
-      WebResponse<RoleResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+      WebResponse<PolyclinicResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
       });
       assertNotNull(response.getErrors());
     });
@@ -246,7 +262,7 @@ class PolyclinicControllerTest {
   @Test
   void deleteSuccess() throws Exception{
     mockMvc.perform(
-        delete("/api/polyclinics/{polyclinicId}",POLYCLINIC_ID.toString())
+        delete("/api/polyclinics/{polyclinicSlug}/{polyclinicId}",POLYCLINIC_SLUG,POLYCLINIC_ID.toString())
             .header("X-API-TOKEN","test")
     ).andExpectAll(
         status().isOk()
@@ -261,7 +277,7 @@ class PolyclinicControllerTest {
   @Test
   void deleteFailedToken() throws Exception{
     mockMvc.perform(
-        delete("/api/polyclinics/{polyclinicId}",POLYCLINIC_ID.toString())
+        delete("/api/polyclinics/{polyclinicSlug}/{polyclinicId}",POLYCLINIC_SLUG,POLYCLINIC_ID.toString())
     ).andExpectAll(
         status().isUnauthorized()
     ).andDo(result -> {

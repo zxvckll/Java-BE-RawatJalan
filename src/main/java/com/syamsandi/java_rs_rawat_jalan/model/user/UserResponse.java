@@ -1,4 +1,5 @@
-package com.syamsandi.java_rs_rawat_jalan.model;
+package com.syamsandi.java_rs_rawat_jalan.model.user;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,15 +12,12 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserProfileResponse {
+public class UserResponse {
 
   private UUID id;
 
   private String name;
 
-  private String imageUrl;
+  private String email;
 
-  private String dateOfBirth;
-
-  private String address;
 }

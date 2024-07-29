@@ -10,6 +10,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- Create the polyclinics table
 CREATE TABLE polyclinics (
     id UUID  PRIMARY KEY,
+    slug VARCHAR(100) NOT NULL UNIQUE,
     name VARCHAR(100) NOT NULL UNIQUE
 );
 
@@ -17,6 +18,7 @@ CREATE TABLE polyclinics (
 CREATE TABLE clinics (
     id UUID  PRIMARY KEY,
     polyclinic_id UUID NOT NULL,
+    slug VARCHAR(100) NOT NULL UNIQUE,
     name VARCHAR(100) NOT NULL UNIQUE,
     FOREIGN KEY (polyclinic_id) REFERENCES polyclinics(id)
 );
@@ -35,6 +37,7 @@ CREATE TABLE user_profile (
     id UUID  PRIMARY KEY,
     user_id UUID NOT NULL,
     name VARCHAR(100) NOT NULL,
+    slug VARCHAR(100) NOT NULL UNIQUE,
     image_url VARCHAR(100),
     date_of_birth DATE,
     address VARCHAR(255),
@@ -45,6 +48,7 @@ CREATE TABLE user_profile (
 CREATE TABLE doctor_profile (
     id UUID  PRIMARY KEY,
     user_id UUID NOT NULL,
+    slug VARCHAR(100) NOT NULL UNIQUE,
     clinic_id UUID NOT NULL,
     education VARCHAR(100),
     course VARCHAR(100),
@@ -110,3 +114,6 @@ CREATE TABLE appointments (
     FOREIGN KEY (clinic_id) REFERENCES clinics(id),
     FOREIGN KEY (status_id) REFERENCES statuses(id)
 );
+
+ALTER TABLE appointments
+ADD slug varchar(100) NOT NULL UNIQUE;

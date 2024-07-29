@@ -11,12 +11,10 @@ import java.util.UUID;
 
 @Repository
 public interface ClinicRepository extends JpaRepository<Clinic, UUID> {
-  Optional<Clinic> findFirstById(UUID id);
 
-  Optional<Clinic> findFirstByName(String name);
+  Optional<Clinic> findFirstBySlugAndId(String slug, UUID id);
 
   List<Clinic> findAllByPolyclinic(Polyclinic polyclinic);
 
-  Boolean existsByName(String name);
 
 }

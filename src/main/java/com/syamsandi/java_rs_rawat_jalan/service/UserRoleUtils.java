@@ -4,6 +4,6 @@ import com.syamsandi.java_rs_rawat_jalan.entity.User;
 
 public interface UserRoleUtils {
 
-  Boolean isAdmin(User user);
-  void checkAdminRole(User user);
+  void isAdmin(User user);
+  void isDoctor(User user);
 }

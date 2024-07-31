@@ -41,7 +41,7 @@ public class ClinicServiceImpl implements ClinicService {
   @Override
   public ClinicResponse create(User user, CreateClinicRequest request) {
     validatorService.validate(request);
-    userRoleUtils.checkAdminRole(user);
+    userRoleUtils.isAdmin(user);
 
     Polyclinic polyclinic = polyclinicRepository.findFirstBySlugAndId(request.getPolyclinicSlug(),request.getPolyclinicId())
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Polyclinic not found"));
@@ -60,7 +60,7 @@ public class ClinicServiceImpl implements ClinicService {
   @Transactional(readOnly = true)
   @Override
   public ClinicResponse get(User user, ClinicPath clinicPath) {
-    userRoleUtils.checkAdminRole(user);
+    userRoleUtils.isAdmin(user);
 
     Clinic clinic = clinicRepository.findFirstBySlugAndId(clinicPath.getClinicSlug(),clinicPath.getClinicId())
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Clinic not found"));
@@ -75,7 +75,7 @@ public class ClinicServiceImpl implements ClinicService {
   @Transactional(readOnly = true)
   @Override
   public List<ClinicResponse> getAll(User user, ClinicPath clinicPath) {
-    userRoleUtils.checkAdminRole(user);
+    userRoleUtils.isAdmin(user);
 
     List<Clinic> clinics;
     if (clinicPath.getPolyclinicSlug() != null) {
@@ -93,7 +93,7 @@ public class ClinicServiceImpl implements ClinicService {
   @Override
   public ClinicResponse update(User user, UpdateClinicRequest request) {
     validatorService.validate(request);
-    userRoleUtils.checkAdminRole(user);
+    userRoleUtils.isAdmin(user);
 
     Polyclinic polyclinic = polyclinicRepository.findFirstBySlugAndId(request.getPolyclinicSlug(),request.getPolyclinicId())
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Polyclinic not found"));
@@ -112,7 +112,7 @@ public class ClinicServiceImpl implements ClinicService {
   @Transactional
   @Override
   public void delete(User user, ClinicPath clinicPath) {
-    userRoleUtils.checkAdminRole(user);
+    userRoleUtils.isAdmin(user);
 
     Clinic clinic = clinicRepository.findFirstBySlugAndId(clinicPath.getClinicSlug(),clinicPath.getClinicId())
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Clinic not found"));

@@ -90,7 +90,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 
   @Override
   public Page<UserProfileResponse> search(User user, SearchUserProfileRequest request) {
-    userRoleUtils.checkAdminRole(user);
+    userRoleUtils.isAdmin(user);
     validatorService.validate(request);
     Specification<UserProfile> specification = ((root, query, builder) -> {
       List<Predicate> predicates = new ArrayList<>();

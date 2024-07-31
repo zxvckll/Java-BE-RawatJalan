@@ -44,7 +44,7 @@ public class UserRoleServiceImpl implements UserRoleService {
   @Override
   public UserRoleResponse create(User checkUser,UserRoleRequest request) {
     validatorService.validate(request);
-    userRoleUtils.checkAdminRole(checkUser);
+    userRoleUtils.isAdmin(checkUser);
 
     User user = userRepository.findById(request.getUserId()).orElseThrow(
         () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found")
@@ -70,7 +70,7 @@ public class UserRoleServiceImpl implements UserRoleService {
   @Transactional(readOnly = true)
   @Override
   public UserRoleResponse get(User user,UUID id) {
-    userRoleUtils.checkAdminRole(user);
+    userRoleUtils.isAdmin(user);
 
     UserRole userRole = userRoleRepository.findById(id).orElseThrow(
         () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "User Role not found")
@@ -83,7 +83,7 @@ public class UserRoleServiceImpl implements UserRoleService {
   public Page<UserRoleResponse> getAll(User checkUser, PagingUserRoleRequest request) {
     validatorService.validate(request);
 
-    userRoleUtils.checkAdminRole(checkUser);
+    userRoleUtils.isAdmin(checkUser);
 
     // Create Pageable object for pagination
     Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
@@ -122,7 +122,7 @@ public class UserRoleServiceImpl implements UserRoleService {
   @Transactional
   @Override
   public UserRoleResponse update(User checkUser,UserRoleRequest request, UUID id) {
-    userRoleUtils.checkAdminRole(checkUser);
+    userRoleUtils.isAdmin(checkUser);
 
     UserRole userRole = userRoleRepository.findById(id).orElseThrow(
         () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "User Role not found")
@@ -143,7 +143,7 @@ public class UserRoleServiceImpl implements UserRoleService {
   @Transactional
   @Override
   public void delete(User user,UUID id) {
-    userRoleUtils.checkAdminRole(user);
+    userRoleUtils.isAdmin(user);
 
     UserRole userRole = userRoleRepository.findById(id).orElseThrow(
         () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "User Role not found")

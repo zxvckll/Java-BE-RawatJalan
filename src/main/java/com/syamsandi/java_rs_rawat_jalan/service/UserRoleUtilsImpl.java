@@ -19,16 +19,24 @@ public class UserRoleUtilsImpl implements UserRoleUtils {
   private UserRoleRepository userRoleRepository;
 
   @Override
-  public Boolean isAdmin(User user) {
+  public void isAdmin(User user) {
     List<UserRole> userRoles = userRoleRepository.findAllByUser(user);
-    return userRoles.stream()
+    Boolean isAdmin = userRoles.stream()
         .anyMatch(userRole -> "admin".equals(userRole.getRole().getName()));
-  }
-
-  @Override
-  public void checkAdminRole(User user) {
-    if (!isAdmin(user)) {
+    if (!isAdmin) {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED");
     }
   }
+
+  @Override
+  public void isDoctor(User user) {
+    List<UserRole> userRoles = userRoleRepository.findAllByUser(user);
+    Boolean isDoctor = userRoles.stream()
+        .anyMatch(userRole -> "doctor".equals(userRole.getRole().getName()));
+    if (!isDoctor) {
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED");
+    }
+  }
+
+
 }

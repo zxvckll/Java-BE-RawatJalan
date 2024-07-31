@@ -20,6 +20,8 @@ public class DoctorProfile {
   @Id
   private UUID id;
 
+  private String slug;
+
   private String education;
 
   private String course;
@@ -36,9 +38,9 @@ public class DoctorProfile {
   @JoinColumn(name = "clinic_id")
   private Clinic clinic;
 
-  @OneToMany(mappedBy = "doctorProfile")
+  @OneToMany(mappedBy = "doctorProfile", cascade = CascadeType.ALL)
   private List<Schedule> schedules;
 
-  @OneToMany(mappedBy = "doctorProfile")
+  @OneToMany(mappedBy = "doctorProfile", cascade = CascadeType.ALL)
   private List<Appointment> appointments;
 }

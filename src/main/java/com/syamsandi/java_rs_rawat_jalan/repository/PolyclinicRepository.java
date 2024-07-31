@@ -21,4 +21,6 @@ public interface PolyclinicRepository extends JpaRepository<Polyclinic, UUID> {
 
   Boolean existsByName(String name);
 
+
+
 }

@@ -22,8 +22,6 @@ public class Appointment {
 
   private LocalDate date;
 
-  private String slug;
-
   @Column(name = "waiting_estimation")
   private String waitingEstimation;
 

@@ -28,9 +28,9 @@ public class Clinic {
   @JoinColumn(name = "polyclinic_id")
   private Polyclinic polyclinic;
 
-  @OneToMany(mappedBy = "clinic")
+  @OneToMany(mappedBy = "clinic", cascade = CascadeType.ALL)
   private List<DoctorProfile> doctorProfiles;
 
-  @OneToMany(mappedBy = "clinic")
+  @OneToMany(mappedBy = "clinic", cascade = CascadeType.ALL)
   private List<Appointment> appointments;
 }

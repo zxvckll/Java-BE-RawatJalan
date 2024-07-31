@@ -34,7 +34,7 @@ public class RoleServiceImpl implements RoleService {
   @Override
   public RoleResponse create(User user, CreateRoleRequest request) {
     validatorService.validate(request);
-    userRoleUtils.checkAdminRole(user);
+    userRoleUtils.isAdmin(user);
 
     Role role = new Role();
     role.setId(UUID.randomUUID());
@@ -47,7 +47,7 @@ public class RoleServiceImpl implements RoleService {
   @Transactional(readOnly = true)
   @Override
   public RoleResponse get(User user,UUID id) {
-    userRoleUtils.checkAdminRole(user);
+    userRoleUtils.isAdmin(user);
 
     Role role = roleRepository.findFirstById(id).orElseThrow(
         () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Role not found")
@@ -59,7 +59,7 @@ public class RoleServiceImpl implements RoleService {
   @Transactional(readOnly = true)
   @Override
   public List<RoleResponse> getAll(User user) {
-    userRoleUtils.checkAdminRole(user);
+    userRoleUtils.isAdmin(user);
 
     List<Role> roles = roleRepository.findAll();
     return roles.stream().map(this::toRoleResponse).toList();
@@ -69,7 +69,7 @@ public class RoleServiceImpl implements RoleService {
   @Override
   public RoleResponse update(User user, CreateRoleRequest request, UUID id) {
     validatorService.validate(request);
-    userRoleUtils.checkAdminRole(user);
+    userRoleUtils.isAdmin(user);
 
     Role role = roleRepository.findFirstById(id).orElseThrow(
         () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Role not found")
@@ -82,7 +82,7 @@ public class RoleServiceImpl implements RoleService {
   @Transactional
   @Override
   public void delete(User user,UUID id) {
-    userRoleUtils.checkAdminRole(user);
+    userRoleUtils.isAdmin(user);
 
     Role role = roleRepository.findFirstById(id).orElseThrow(
         () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Role not found")

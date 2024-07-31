@@ -39,7 +39,7 @@ public class PolyclinicServiceImpl implements PolyclinicService {
   @Override
   public PolyclinicResponse create(User user, CreatePolyclinicRequest request) {
     validatorService.validate(request);
-    userRoleUtils.checkAdminRole(user);
+    userRoleUtils.isAdmin(user);
 
     String slug = slugUtils.toSlug(request.getName());
     Polyclinic polyclinic = new Polyclinic();
@@ -54,7 +54,7 @@ public class PolyclinicServiceImpl implements PolyclinicService {
   @Transactional(readOnly = true)
   @Override
   public PolyclinicResponse get(User user, PolyclinicPath polyclinicPath) {
-    userRoleUtils.checkAdminRole(user);
+    userRoleUtils.isAdmin(user);
 
     Polyclinic polyclinic = polyclinicRepository.findFirstBySlugAndId(polyclinicPath.getPolyclinicSlug(), polyclinicPath.getPolyclinicId())
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Polyclinic not found"));
@@ -65,7 +65,7 @@ public class PolyclinicServiceImpl implements PolyclinicService {
   @Transactional(readOnly = true)
   @Override
   public List<PolyclinicResponse> getAll(User user) {
-    userRoleUtils.checkAdminRole(user);
+    userRoleUtils.isAdmin(user);
 
     List<Polyclinic> polyclinics = polyclinicRepository.findAll();
     return polyclinics.stream().map(this::toPolyclinicResponse).toList();
@@ -75,7 +75,7 @@ public class PolyclinicServiceImpl implements PolyclinicService {
   @Override
   public PolyclinicResponse update(User user, UpdatePolyclinicRequest request) {
     validatorService.validate(request);
-    userRoleUtils.checkAdminRole(user);
+    userRoleUtils.isAdmin(user);
 
     Polyclinic polyclinic = polyclinicRepository.findFirstBySlugAndId(request.getPolyclinicSlug(), request.getPolyclinicId())
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Polyclinic not found"));
@@ -89,7 +89,7 @@ public class PolyclinicServiceImpl implements PolyclinicService {
   @Transactional
   @Override
   public void delete(User user, PolyclinicPath polyclinicPath) {
-    userRoleUtils.checkAdminRole(user);
+    userRoleUtils.isAdmin(user);
 
     Polyclinic polyclinic = polyclinicRepository.findFirstBySlugAndId(polyclinicPath.getPolyclinicSlug(), polyclinicPath.getPolyclinicId())
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Polyclinic not found"));

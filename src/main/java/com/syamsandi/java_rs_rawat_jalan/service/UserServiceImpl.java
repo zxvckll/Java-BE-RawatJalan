@@ -1,5 +1,6 @@
 package com.syamsandi.java_rs_rawat_jalan.service;
 
+import com.syamsandi.java_rs_rawat_jalan.entity.PatientProfile;
 import com.syamsandi.java_rs_rawat_jalan.entity.User;
 import com.syamsandi.java_rs_rawat_jalan.entity.UserProfile;
 import com.syamsandi.java_rs_rawat_jalan.model.user.RegisterUserRequest;
@@ -29,6 +30,9 @@ public class UserServiceImpl implements UserService {
   @Autowired
   private ValidatorService validatorService;
 
+  @Autowired
+  private SlugUtils slugUtils;
+
 
   @Transactional
   @Override
@@ -49,6 +53,11 @@ public class UserServiceImpl implements UserService {
     userProfile.setUser(user);
     userProfile.setName(request.getName());
     userProfileRepository.save(userProfile);
+
+    PatientProfile patientProfile = new PatientProfile();
+    patientProfile.setId(UUID.randomUUID());
+    patientProfile.setUser(user);
+    patientProfile.setSlug(slugUtils.toSlug(userProfile.getName()));
   }
 
   @Transactional(readOnly = true)

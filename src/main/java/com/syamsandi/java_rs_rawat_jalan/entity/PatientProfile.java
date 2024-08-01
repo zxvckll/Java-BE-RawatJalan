@@ -22,6 +22,8 @@ public class PatientProfile {
 
   private String noRM;
 
+  private String slug;
+
   @Column(name = "medical_history")
   private String medicalHistory;
 

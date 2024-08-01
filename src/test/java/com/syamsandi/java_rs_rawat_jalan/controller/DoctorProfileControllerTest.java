@@ -6,6 +6,7 @@ import com.syamsandi.java_rs_rawat_jalan.entity.*;
 import com.syamsandi.java_rs_rawat_jalan.model.WebResponse;
 import com.syamsandi.java_rs_rawat_jalan.model.doctor_profile.CreateDoctorProfileRequest;
 import com.syamsandi.java_rs_rawat_jalan.model.doctor_profile.DoctorProfileResponse;
+import com.syamsandi.java_rs_rawat_jalan.model.doctor_profile.UpdateDoctorProfileRequest;
 import com.syamsandi.java_rs_rawat_jalan.model.user_profile.UserProfileRequest;
 import com.syamsandi.java_rs_rawat_jalan.model.user_profile.UserProfileResponse;
 import com.syamsandi.java_rs_rawat_jalan.repository.*;
@@ -206,9 +207,8 @@ class DoctorProfileControllerTest {
 
     doctorProfileRepository.save(doctorProfile);
 
-    CreateDoctorProfileRequest request = new CreateDoctorProfileRequest();
+    UpdateDoctorProfileRequest request = new UpdateDoctorProfileRequest();
     request.setCourse("course update");
-    request.setUserId(USER_ID);
     request.setEducation("education update");
     request.setExperience("experience update");
     request.setOrganization("organization update");

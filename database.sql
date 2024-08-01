@@ -62,6 +62,7 @@ CREATE TABLE doctor_profile (
 CREATE TABLE patient_profile (
     id UUID  PRIMARY KEY,
     user_id UUID NOT NULL,
+    slug VARCHAR(100) NOT NULL UNIQUE,
     noRM VARCHAR(100),
     medical_history TEXT,
     current_treatment TEXT,

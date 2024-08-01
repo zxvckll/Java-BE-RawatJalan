@@ -102,8 +102,8 @@ public class DoctorProfileController {
                                                          @RequestParam(value = "course", required = false) String course,
                                                          @RequestParam(value = "education", required = false) String education,
                                                          @RequestParam(value = "organization", required = false) String organization,
-                                                         @RequestParam(value = "name", required = false,defaultValue = "0") Integer page,
-                                                         @RequestParam(value = "name", required = false,defaultValue = "10") Integer size){
+                                                         @RequestParam(value = "page", required = false,defaultValue = "0") Integer page,
+                                                         @RequestParam(value = "size", required = false,defaultValue = "10") Integer size){
     SearchDoctorProfileRequest request = new SearchDoctorProfileRequest();
     request.setPage(page);
     request.setSize(size);

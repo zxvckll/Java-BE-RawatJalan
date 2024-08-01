@@ -6,4 +6,6 @@ public interface UserRoleUtils {
 
   void isAdmin(User user);
   void isDoctor(User user);
+
+  void isAdminOrDoctor(User user);
 }

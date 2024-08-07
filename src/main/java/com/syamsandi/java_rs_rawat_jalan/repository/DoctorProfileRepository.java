@@ -18,6 +18,8 @@ public interface DoctorProfileRepository extends JpaRepository<DoctorProfile, UU
 
   Optional<DoctorProfile> findFirstByClinicAndIdAndSlug(Clinic clinic,UUID id, String slug);
 
+  Optional<DoctorProfile> findFirstByClinicAndId(Clinic clinic,UUID id);
+
   Optional<DoctorProfile> findFirstByIdAndSlug(UUID id, String slug);
 
   Optional<DoctorProfile> findFirstByUser(User user);
